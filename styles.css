@@ -1,0 +1,23 @@
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #FAF8F5;
+    color: #1C1917;
+    scroll-behavior: smooth;
+}
+.serif-heading {
+    font-family: 'Fraunces', serif;
+}
+.bilingual-sub { display: none; }
+body.lang-ru .bilingual-ru { display: block; }
+body.lang-en .bilingual-en { display: block; }
+body.lang-ru span.bilingual-ru-inline { display: inline; }
+body.lang-en span.bilingual-en-inline { display: inline; }
+.bilingual-ru-inline, .bilingual-en-inline { display: none; }
+
+.fade-enter {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
