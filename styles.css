@@ -8,9 +8,7 @@ body {
     font-family: 'Fraunces', serif;
 }
 /* Bilingválne kotvy pre SK / UA / RU / EN */
-.bilingual-sub {
-    display: none;
-}
+.bilingual-sub { display: none; }
 body.lang-ua .bilingual-ua { display: block; }
 body.lang-ru .bilingual-ru { display: block; }
 body.lang-en .bilingual-en { display: block; }
@@ -19,9 +17,8 @@ body.lang-ua span.bilingual-ua-inline { display: inline; }
 body.lang-ru span.bilingual-ru-inline { display: inline; }
 body.lang-en span.bilingual-en-inline { display: inline; }
 
-.bilingual-ua-inline, .bilingual-ru-inline, .bilingual-en-inline {
-    display: none;
-}
+.bilingual-ua-inline, .bilingual-ru-inline, .bilingual-en-inline { display: none; }
+
 .fade-enter {
     animation: fadeIn 0.3s ease-out forwards;
 }

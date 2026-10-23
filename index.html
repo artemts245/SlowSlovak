@@ -21,34 +21,57 @@
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-16">
+    <main class="max-w-6xl mx-auto px-4 py-16 flex-grow">
         <section class="text-center max-w-3xl mx-auto mb-16">
             <h1 class="serif-heading text-4xl sm:text-6xl font-bold mb-6">Slovenčina zrozumiteľne, pomaly a bez stresu.</h1>
             <p class="text-lg text-stone-600 mb-4">Zabudni na bifľovanie tabuliek. Zisti, kde máš v slovenčine medzery, a zlepši sa na kurzoch zameraných na reálne rozprávanie.</p>
             <p class="bilingual-sub bilingual-ua text-sm text-amber-800 bg-amber-50 p-2.5 rounded-xl mb-6">🇺🇦 Дізнайся свій рівень словацької мови та слабкі місця за допомогою безкоштовного тесту.</p>
             <p class="bilingual-sub bilingual-ru text-sm text-amber-800 bg-amber-50 p-2.5 rounded-xl mb-6">🇷🇺 Узнай свой уровень словацкого языка и слабые места с помощью бесплатного теста.</p>
             <p class="bilingual-sub bilingual-en text-sm text-amber-800 bg-amber-50 p-2.5 rounded-xl mb-6">🇬🇧 Discover your Slovak level and weak spots with our free diagnostic test.</p>
-            <button class="bg-amber-600 text-white px-8 py-4 rounded-2xl font-bold">👉 Zisti svoju úroveň (Test zdarma)</button>
+            <button onclick="startQuiz()" class="bg-amber-600 hover:bg-amber-700 text-white px-8 py-4 rounded-2xl font-bold transition shadow-md cursor-pointer">👉 Zisti svoju úroveň (Test zdarma)</button>
         </section>
 
         <section id="kurzy" class="grid md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-3xl border border-stone-200">
+            <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm">
                 <h3 class="serif-heading text-xl font-bold mb-2">Záhada menom SA a SI</h3>
                 <p class="text-sm text-stone-600 mb-4">Konečne pochopíš, kedy použiť sa, kedy si a kam ich dať vo vete.</p>
-                <p class="text-2xl font-extrabold">99 € / 119 €</p>
+                <p class="text-2xl font-extrabold mb-4">99 € / 119 €</p>
+                <button onclick="openCheckout('sasi')" class="w-full bg-stone-100 hover:bg-stone-900 hover:text-white py-2.5 rounded-xl text-sm font-bold transition">Vybrať kurz</button>
             </div>
-            <div class="bg-white p-6 rounded-3xl border border-stone-200">
+            <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm">
                 <h3 class="serif-heading text-xl font-bold mb-2">Ťažké témy B1</h3>
                 <p class="text-sm text-stone-600 mb-4">Prekroč hranicu od „rozumiem“ k „plynule hovorím“.</p>
-                <p class="text-2xl font-extrabold">105 €</p>
+                <p class="text-2xl font-extrabold mb-4">105 €</p>
+                <button onclick="openCheckout('b1')" class="w-full bg-stone-100 hover:bg-stone-900 hover:text-white py-2.5 rounded-xl text-sm font-bold transition">Vybrať kurz</button>
             </div>
-            <div class="bg-white p-6 rounded-3xl border border-stone-200">
+            <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm">
                 <h3 class="serif-heading text-xl font-bold mb-2">Individuálna lekcia</h3>
                 <p class="text-sm text-stone-600 mb-4">Súkromná hodina cez Zoom prispôsobená tvojmu tempu.</p>
-                <p class="text-2xl font-extrabold">25 € / 45 min</p>
+                <p class="text-2xl font-extrabold mb-4">25 € / 45 min</p>
+                <button onclick="openCheckout('indiv')" class="w-full bg-stone-100 hover:bg-stone-900 hover:text-white py-2.5 rounded-xl text-sm font-bold transition">Objednať hodinu</button>
             </div>
         </section>
+        
+        <section id="view-quiz" class="hidden max-w-2xl mx-auto mt-12 bg-white p-8 rounded-3xl border border-stone-200 shadow-sm">
+            <div class="flex justify-between text-xs font-bold text-stone-500 mb-4">
+                <span id="quiz-progress-text">Otázka 1 / 30</span>
+                <button onclick="fillDemoResults()" class="text-amber-700 underline cursor-pointer">⚡ Rýchlo vyplniť (Demo výsledok)</button>
+            </div>
+            <h2 id="quiz-question-text" class="serif-heading text-2xl font-bold mb-6"></h2>
+            <div id="quiz-options" class="space-y-3 mb-6"></div>
+            <button onclick="nextQuestion()" id="quiz-next-btn" class="bg-stone-900 hover:bg-stone-800 text-white px-6 py-3 rounded-xl font-bold w-full transition">Ďalšia otázka →</button>
+        </section>
+
+        <section id="view-results" class="hidden max-w-3xl mx-auto mt-12 bg-white p-8 rounded-3xl border border-stone-200 shadow-sm">
+            <h2 id="res-level-title" class="serif-heading text-3xl font-bold mb-2"></h2>
+            <p id="res-level-desc" class="text-stone-600 mb-6">Na základe tvojich odpovedí sme analyzovali tvoje silné stránky a oblasti na zlepšenie:</p>
+            <div id="res-category-bars" class="space-y-3 mb-8"></div>
+            <div id="res-recommendation-box" class="bg-stone-900 text-white p-6 rounded-2xl"></div>
+        </section>
+    
     </main>
+    
+    <script src="questions.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
