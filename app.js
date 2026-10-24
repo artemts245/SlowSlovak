@@ -128,8 +128,27 @@ function selectWaitlistTopic(topic) {
 
 function handleWaitlistSubmit(e) {
     e.preventDefault();
-    const success = document.getElementById('waitlist-success');
     const input = document.getElementById('waitlist-email');
+    const selectedLabel = document.getElementById('waitlist-selected-label');
+    const success = document.getElementById('waitlist-success');
+    
+    const email = input.value.trim();
+    const topic = selectedLabel ? selectedLabel.textContent : 'Všetky pripravované kurzy';
+
+    if (!email) return;
+
+    // Odoslanie požiadavky do Google Apps Scriptu s typom 'waitlist'
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+            type: 'waitlist',
+            email: email,
+            topic: topic
+        })
+    }).catch(err => console.error("Chyba pri čakacej listine:", err));
+
     if (success) success.classList.remove('hidden');
     if (input) input.value = '';
 }
