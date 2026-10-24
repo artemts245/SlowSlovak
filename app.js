@@ -1,6 +1,27 @@
-// INICIALIZÁCIA IKON A ROZBAĽOVACIEHO MENU JAZYKOV
+// KĽÚČE PRE LOCALSTORAGE
+const STORAGE_KEY_QUIZ = 'slow_slovak_quiz_state_v1';
+const STORAGE_KEY_LANG = 'slow_slovak_lang_v1';
+
+// STAVOVÉ PREMENNÉ
+let activeQuestions = [];
+let currentQuestionIndex = 0;
+let userAnswers = [];
+let quizLengthMode = 30;
+let selectedCourseKey = 'sasi';
+let selectedPackagePrice = 99;
+
+// INICIALIZÁCIA PO NAČÍTANÍ STRÁNKY
 document.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) lucide.createIcons();
+
+    // Obnovenie naposledy zvoleného pomocného jazyka z localStorage
+    const savedLang = localStorage.getItem(STORAGE_KEY_LANG);
+    if (savedLang) {
+        setLangHelper(savedLang);
+    }
+
+    // Kontrola, či existuje rozpracovaný test v localStorage
+    updateHeroCtaIfSavedProgress();
 
     // Zatvorenie jazykového dropdownu pri kliknutí mimo neho
     document.addEventListener('click', (e) => {
@@ -14,22 +35,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // Zatvorenie platobného modalu klávesom Escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            if (typeof closeCourseModal === 'function') closeCourseModal();
-            if (typeof closeCheckout === 'function') closeCheckout();
+            closeCourseModal();
         }
     });
 });
 
+// ==========================================
+// 1. JAZYKOVÝ DROPDOWN (SK / UA / RU / EN)
+// ==========================================
 function toggleLangDropdown() {
     const menu = document.getElementById('lang-dropdown-menu');
     if (menu) menu.classList.toggle('hidden');
 }
 
-// Prepínanie bilingválnej jazykovej pomoci cez Dropdown (SK / UA / RU / EN)
 function setLangHelper(lang) {
     document.body.classList.remove('lang-ua', 'lang-ru', 'lang-en');
 
     const normalized = (lang === 'none' || !lang) ? 'sk' : lang;
+    localStorage.setItem(STORAGE_KEY_LANG, normalized);
+
     const labels = {
         sk: '🇸🇰 Iba SK',
         ua: '🇺🇦 + UA (Ukrajinčina)',
@@ -67,9 +91,30 @@ function showView(viewName) {
     if (target) target.classList.remove('hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (window.lucide) lucide.createIcons();
+
+    if (viewName === 'home') {
+        updateHeroCtaIfSavedProgress();
+    }
 }
 
-// ČAKACIA LISTINA (WAITLIST PRE PRIPRAVOVANÉ KURZY)
+// ==========================================
+// 2. ČASTÉ OTÁZKY (FAQ AKORDEÓN) A WAITLIST
+// ==========================================
+function toggleFaq(id) {
+    const content = document.getElementById('faq-content-' + id);
+    const icon = document.getElementById('faq-icon-' + id);
+    if (!content) return;
+
+    const isHidden = content.classList.contains('hidden');
+    if (isHidden) {
+        content.classList.remove('hidden');
+        if (icon) icon.style.transform = 'rotate(180deg)';
+    } else {
+        content.classList.add('hidden');
+        if (icon) icon.style.transform = 'rotate(0deg)';
+    }
+}
+
 function selectWaitlistTopic(topic) {
     const label = document.getElementById('waitlist-selected-label');
     const input = document.getElementById('waitlist-email');
@@ -85,18 +130,73 @@ function handleWaitlistSubmit(e) {
     if (input) input.value = '';
 }
 
-// PLNÝ DIAGNOSTICKÝ KVÍZ (30 vs 10 otázok, nápovedy, tlačidlo Neviem) A DETAILNÉ VÝSLEDKY
-let activeQuestions = [];
-let currentQuestionIndex = 0;
-let userAnswers = [];
-let quizLengthMode = 30;
-let selectedCourseKey = 'sasi';
-let selectedPackagePrice = 99;
+// ==========================================
+// 3. UKLADANIE PRIEBEHU KVÍZU DO LOCALSTORAGE
+// ==========================================
+function saveQuizProgress() {
+    try {
+        const state = {
+            quizLengthMode: quizLengthMode,
+            currentQuestionIndex: currentQuestionIndex,
+            answersMap: userAnswers.map(a => ({
+                qId: a.qObj.id,
+                selectedIndex: a.selectedIndex
+            }))
+        };
+        localStorage.setItem(STORAGE_KEY_QUIZ, JSON.stringify(state));
+    } catch (e) {
+        // Ignorujeme, ak je localStorage nedostupný
+    }
+}
 
-function setQuizLengthMode(count) {
-    quizLengthMode = count;
+function clearQuizProgress() {
+    try {
+        localStorage.removeItem(STORAGE_KEY_QUIZ);
+    } catch (e) {}
+    updateHeroCtaIfSavedProgress();
+}
+
+function updateHeroCtaIfSavedProgress() {
+    const ctaTextEl = document.getElementById('hero-cta-text');
+    if (!ctaTextEl) return;
+
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY_QUIZ);
+        if (!raw) {
+            ctaTextEl.textContent = 'Zisti svoju úroveň (Test zdarma)';
+            return;
+        }
+        const saved = JSON.parse(raw);
+        if (saved && Array.isArray(saved.answersMap) && saved.answersMap.length > 0 && saved.currentQuestionIndex < saved.quizLengthMode) {
+            ctaTextEl.textContent = `Pokračovať v teste (Otázka ${saved.currentQuestionIndex + 1} z ${saved.quizLengthMode})`;
+        } else {
+            ctaTextEl.textContent = 'Zisti svoju úroveň (Test zdarma)';
+        }
+    } catch (e) {
+        ctaTextEl.textContent = 'Zisti svoju úroveň (Test zdarma)';
+    }
+}
+
+// ==========================================
+// 4. DIAGNOSTICKÝ KVÍZ (S NÁVRATOM SPÄŤ)
+// ==========================================
+function buildActiveQuestionsList(mode) {
+    if (mode === 10) {
+        const cats = ['sasi', 'sklonovanie', 'slovesa', 'predlozky', 'b1vazby'];
+        const list = [];
+        cats.forEach(c => {
+            const catQs = ALL_QUESTIONS.filter(q => q.cat === c).slice(0, 2);
+            list.push(...catQs);
+        });
+        return list;
+    }
+    return [...ALL_QUESTIONS];
+}
+
+function updateModeButtonsUI(count) {
     const btn30 = document.getElementById('mode-btn-30');
     const btn10 = document.getElementById('mode-btn-10');
+    if (!btn30 || !btn10) return;
 
     if (count === 30) {
         btn30.className = 'px-2 py-0.5 rounded font-semibold bg-indigo-950 text-white';
@@ -105,21 +205,63 @@ function setQuizLengthMode(count) {
         btn10.className = 'px-2 py-0.5 rounded font-semibold bg-indigo-950 text-white';
         btn30.className = 'px-2 py-0.5 rounded font-semibold text-stone-600 hover:bg-stone-100';
     }
-    startQuizFlow();
+}
+
+function setQuizLengthMode(count) {
+    quizLengthMode = count;
+    clearQuizProgress();
+    updateModeButtonsUI(count);
+    activeQuestions = buildActiveQuestionsList(quizLengthMode);
+    currentQuestionIndex = 0;
+    userAnswers = [];
+    showView('quiz');
+    renderCurrentQuestion();
 }
 
 function startQuizFlow() {
-    if (quizLengthMode === 10) {
-        const cats = ['sasi', 'sklonovanie', 'slovesa', 'predlozky', 'b1vazby'];
-        activeQuestions = [];
-        cats.forEach(c => {
-            const catQs = ALL_QUESTIONS.filter(q => q.cat === c).slice(0, 2);
-            activeQuestions.push(...catQs);
-        });
-    } else {
-        activeQuestions = [...ALL_QUESTIONS];
-    }
+    // Skúsime načítať rozpracovaný test z localStorage
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY_QUIZ);
+        if (raw) {
+            const saved = JSON.parse(raw);
+            if (saved && (saved.quizLengthMode === 10 || saved.quizLengthMode === 30)) {
+                quizLengthMode = saved.quizLengthMode;
+                updateModeButtonsUI(quizLengthMode);
+                activeQuestions = buildActiveQuestionsList(quizLengthMode);
 
+                userAnswers = [];
+                (saved.answersMap || []).forEach(item => {
+                    const qObj = activeQuestions.find(q => q.id === item.qId);
+                    if (qObj) {
+                        userAnswers.push({
+                            qObj: qObj,
+                            selectedIndex: item.selectedIndex,
+                            isCorrect: item.selectedIndex === qObj.correct,
+                            cat: qObj.cat
+                        });
+                    }
+                });
+
+                currentQuestionIndex = Math.min(saved.currentQuestionIndex || 0, activeQuestions.length - 1);
+                showView('quiz');
+                renderCurrentQuestion();
+                return;
+            }
+        }
+    } catch (e) {}
+
+    // Ak nič nie je uložené, spustíme nový test
+    updateModeButtonsUI(quizLengthMode);
+    activeQuestions = buildActiveQuestionsList(quizLengthMode);
+    currentQuestionIndex = 0;
+    userAnswers = [];
+    showView('quiz');
+    renderCurrentQuestion();
+}
+
+function restartQuizFresh() {
+    clearQuizProgress();
+    activeQuestions = buildActiveQuestionsList(quizLengthMode);
     currentQuestionIndex = 0;
     userAnswers = [];
     showView('quiz');
@@ -145,47 +287,73 @@ function renderCurrentQuestion() {
     document.getElementById('quiz-question-text').textContent = qObj.q;
     document.getElementById('quiz-question-hint').textContent = '💡 Kontekst: ' + qObj.hint;
 
+    // Zobrazenie / skrytie tlačidla "Predchádzajúca otázka"
+    const prevBtn = document.getElementById('quiz-prev-btn');
+    if (prevBtn) {
+        if (currentQuestionIndex > 0) prevBtn.classList.remove('hidden');
+        else prevBtn.classList.add('hidden');
+    }
+
+    const existingAnswer = userAnswers[currentQuestionIndex];
     const container = document.getElementById('quiz-options-container');
     container.innerHTML = '';
 
     const letters = ['A', 'B', 'C', 'D'];
     qObj.options.forEach((optText, idx) => {
+        const isSelected = existingAnswer && existingAnswer.selectedIndex === idx;
         const btn = document.createElement('button');
-        btn.className = 'w-full text-left p-4 sm:p-5 rounded-2xl border-2 border-stone-200 hover:border-terracotta hover:bg-amber-50/40 transition flex items-center gap-4 group';
+        btn.className = isSelected
+            ? 'w-full text-left p-4 sm:p-5 rounded-2xl border-2 border-terracotta bg-amber-50/70 transition flex items-center gap-4 group'
+            : 'w-full text-left p-4 sm:p-5 rounded-2xl border-2 border-stone-200 hover:border-terracotta hover:bg-amber-50/40 transition flex items-center gap-4 group';
         btn.onclick = () => handleQuizAnswer(idx);
 
         btn.innerHTML = `
-            <span class="w-9 h-9 rounded-xl bg-stone-100 group-hover:bg-terracotta group-hover:text-white text-indigo-950 font-bold text-sm flex items-center justify-center shrink-0 transition">
+            <span class="w-9 h-9 rounded-xl ${isSelected ? 'bg-terracotta text-white' : 'bg-stone-100 text-indigo-950'} group-hover:bg-terracotta group-hover:text-white font-bold text-sm flex items-center justify-center shrink-0 transition">
                 ${letters[idx]}
             </span>
             <span class="font-medium text-base sm:text-lg text-indigo-950">${optText}</span>
         `;
         container.appendChild(btn);
     });
+
+    if (window.lucide) lucide.createIcons();
+}
+
+function prevQuizQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        saveQuizProgress();
+        renderCurrentQuestion();
+    }
 }
 
 function handleQuizAnswer(selectedIndex) {
     const qObj = activeQuestions[currentQuestionIndex];
     const isCorrect = selectedIndex === qObj.correct;
 
-    userAnswers.push({
+    userAnswers[currentQuestionIndex] = {
         qObj: qObj,
         selectedIndex: selectedIndex,
         isCorrect: isCorrect,
         cat: qObj.cat
-    });
+    };
 
     if (currentQuestionIndex + 1 < activeQuestions.length) {
         currentQuestionIndex++;
+        saveQuizProgress();
         renderCurrentQuestion();
     } else {
+        clearQuizProgress();
         calculateAndShowResults();
     }
 }
 
+// ==========================================
+// 5. VYHODNOTENIE VÝSLEDKOV A PREHĽAD CHÝB
+// ==========================================
 function calculateAndShowResults() {
     const totalQs = activeQuestions.length;
-    const totalCorrect = userAnswers.filter(a => a.isCorrect).length;
+    const totalCorrect = userAnswers.filter(a => a && a.isCorrect).length;
     const overallPct = Math.round((totalCorrect / totalQs) * 100);
 
     const categoryMeta = [
@@ -197,7 +365,7 @@ function calculateAndShowResults() {
     ];
 
     const catStats = categoryMeta.map(cm => {
-        const qsInCat = userAnswers.filter(a => a.cat === cm.key);
+        const qsInCat = userAnswers.filter(a => a && a.cat === cm.key);
         const correctInCat = qsInCat.filter(a => a.isCorrect).length;
         const pct = qsInCat.length > 0 ? Math.round((correctInCat / qsInCat.length) * 100) : 0;
         return {
@@ -319,6 +487,7 @@ function renderMistakesReview() {
     container.innerHTML = '';
 
     userAnswers.forEach((ans, idx) => {
+        if (!ans) return;
         const q = ans.qObj;
         const userText = ans.selectedIndex === -1 ? 'Neviem (Preskočené)' : q.options[ans.selectedIndex];
         const correctText = q.options[q.correct];
@@ -354,7 +523,9 @@ function toggleMistakesReview() {
     }
 }
 
-// PLNÝ MULTI-TIER CHECKOUT MODAL (zatváranie krížikom v rohu) A DYNAMICKÉ SŤAHOVANIE MATERIÁLOV
+// ==========================================
+// 6. CHECKOUT MODAL A SŤAHOVANIE MATERIÁLOV
+// ==========================================
 function openCourseModal(courseKey) {
     const normalizedKey = courseKey === 'indiv' ? 'individual' : courseKey;
     selectedCourseKey = COURSES_DATA[normalizedKey] ? normalizedKey : 'sasi';
@@ -455,4 +626,36 @@ Slow Slovak`;
 
 function downloadMaterial() {
     downloadSampleMaterial();
+}
+// Odoslanie formulára cez Web3Forms bez presmerovania stránky
+function handleWeb3FormsSubmit(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const object = Object.fromEntries(formData);
+    const json = JSON.stringify(object);
+
+    const successMsg = document.getElementById('contact-success-msg');
+
+    fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: json
+    })
+    .then(async (response) => {
+        let jsonRes = await response.json();
+        if (response.status === 200) {
+            form.classList.add('hidden');
+            if (successMsg) successMsg.classList.remove('hidden');
+        } else {
+            alert(jsonRes.message || 'Pri odosielaní nastala chyba.');
+        }
+    })
+    .catch(error => {
+        alert('Chyba pripojenia. Skús to prosím znova.');
+        console.error(error);
+    });
 }
