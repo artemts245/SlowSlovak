@@ -621,22 +621,182 @@
 
     </main>
 
-    <!-- KVÍZ A VÝSLEDKY (z commitu 5, pred vylepšením v commite 8) -->
-    <section id="view-quiz" class="hidden max-w-2xl mx-auto my-12 bg-white p-8 rounded-3xl border border-stone-200 shadow-sm w-full">
-        <div class="flex justify-between text-xs font-bold text-stone-500 mb-4">
-            <span id="quiz-progress-text">Otázka 1 / 30</span>
-            <button onclick="fillDemoResults()" class="text-terracotta underline cursor-pointer">⚡ Rýchlo vyplniť (Demo výsledok)</button>
+    <!-- ========================================== -->
+    <!-- VIEW 2: DIAGNOSTIC QUIZ FUNNEL             -->
+    <!-- ========================================== -->
+    <section id="view-quiz" class="hidden flex-grow py-8 sm:py-12 px-4 sm:px-6">
+        <div class="max-w-3xl mx-auto">
+            
+            <!-- Quiz Top Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                <button onclick="showView('home')" class="text-xs sm:text-sm font-medium text-stone-500 hover:text-indigo-950 flex items-center gap-1.5">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Späť na úvodnú stránku</span>
+                </button>
+
+                <!-- Mode Switcher: Full 30 questions vs Quick 10 demo -->
+                <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-stone-200 text-xs">
+                    <span class="text-stone-500">Dĺžka testu:</span>
+                    <button onclick="setQuizLengthMode(30)" id="mode-btn-30" class="px-2 py-0.5 rounded font-semibold bg-indigo-950 text-white">
+                        Plný test (30 otázok)
+                    </button>
+                    <button onclick="setQuizLengthMode(10)" id="mode-btn-10" class="px-2 py-0.5 rounded font-semibold text-stone-600 hover:bg-stone-100">
+                        Rýchly test (10 otázok)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Progress Card -->
+            <div class="bg-white rounded-3xl border border-stone-200/90 shadow-lg shadow-indigo-950/5 p-6 sm:p-10">
+                
+                <!-- Progress Header -->
+                <div class="flex items-center justify-between gap-4 mb-3">
+                    <div class="flex items-center gap-2">
+                        <span id="quiz-cat-badge" class="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-amber-100 text-amber-900">
+                            SA / SI a zvratné slovesá
+                        </span>
+                        <span id="quiz-level-badge" class="text-xs font-medium px-2.5 py-1 rounded-full bg-stone-100 text-stone-600">
+                            Úroveň A2
+                        </span>
+                    </div>
+                    <div class="text-xs sm:text-sm font-bold text-indigo-950">
+                        Otázka <span id="quiz-current-num">1</span> z <span id="quiz-total-num">30</span>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full h-2.5 bg-stone-100 rounded-full overflow-hidden mb-8">
+                    <div id="quiz-progress-bar" class="bg-terracotta h-full rounded-full transition-all duration-300" style="width: 3.3%"></div>
+                </div>
+
+                <!-- Question Prompt -->
+                <div class="mb-8">
+                    <p class="text-xs text-stone-400 uppercase tracking-wider font-semibold mb-1">Doplň správny tvar do vety:</p>
+                    <h2 id="quiz-question-text" class="font-serif text-xl sm:text-2xl font-bold text-indigo-950 leading-snug">
+                        Načítavam otázku...
+                    </h2>
+                    <p id="quiz-question-hint" class="text-xs sm:text-sm text-stone-500 mt-2 italic"></p>
+                </div>
+
+                <!-- Options Container -->
+                <div id="quiz-options-container" class="space-y-3 mb-8"></div>
+
+                <!-- Bottom Controls -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-5 border-t border-stone-100">
+                    <button onclick="handleQuizAnswer(-1)" class="w-full sm:w-auto text-xs sm:text-sm font-medium text-stone-500 hover:text-indigo-950 py-2.5 px-4 rounded-xl hover:bg-stone-100 transition flex items-center justify-center gap-1.5">
+                        <i data-lucide="help-circle" class="w-4 h-4"></i>
+                        <span>Neviem (Preskočiť bez tipovania)</span>
+                    </button>
+
+                    <div class="text-xs text-stone-400 text-center sm:text-right">
+                        Klikni na odpoveď pre pokračovanie
+                    </div>
+                </div>
+
+            </div>
         </div>
-        <h2 id="quiz-question-text" class="font-serif text-2xl font-bold mb-6"></h2>
-        <div id="quiz-options" class="space-y-3 mb-6"></div>
-        <button onclick="nextQuestion()" id="quiz-next-btn" class="bg-indigo-950 hover:bg-indigo-900 text-white px-6 py-3 rounded-xl font-bold w-full transition">Ďalšia otázka →</button>
     </section>
 
-    <section id="view-results" class="hidden max-w-3xl mx-auto my-12 bg-white p-8 rounded-3xl border border-stone-200 shadow-sm w-full">
-        <h2 id="res-level-title" class="font-serif text-3xl font-bold mb-2"></h2>
-        <p id="res-level-desc" class="text-stone-600 mb-6">Na základe tvojich odpovedí sme analyzovali tvoje silné stránky a oblasti na zlepšenie:</p>
-        <div id="res-category-bars" class="space-y-3 mb-8"></div>
-        <div id="res-recommendation-box" class="bg-indigo-950 text-white p-6 rounded-2xl"></div>
+    <!-- ========================================== -->
+    <!-- VIEW 3: SMART DIAGNOSTIC RESULTS           -->
+    <!-- ========================================== -->
+    <section id="view-results" class="hidden flex-grow py-10 sm:py-14 px-4 sm:px-6">
+        <div class="max-w-4xl mx-auto space-y-8">
+
+            <!-- Top Summary Card -->
+            <div class="bg-white rounded-3xl border border-stone-200 shadow-xl p-6 sm:p-10">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-stone-100">
+                    <div>
+                        <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full mb-2">
+                            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+                            Diagnostika dokončená
+                        </span>
+                        <h1 class="font-serif text-2xl sm:text-4xl font-bold text-indigo-950">
+                            Tvoja odhadovaná úroveň: <span id="res-level-title" class="text-terracotta">A2</span>
+                        </h1>
+                        <p id="res-summary-diagnosis" class="text-stone-600 text-sm sm:text-base mt-2 max-w-2xl leading-relaxed">
+                            Výborne! Základy máš za sebou, ale pri niektorých témach sa ešte zbytočne strácaš.
+                        </p>
+                    </div>
+
+                    <div class="bg-amber-50/90 border border-amber-200 rounded-2xl p-4 sm:p-5 text-center shrink-0 min-w-[140px]">
+                        <span class="text-xs text-amber-900 font-semibold uppercase block">Celkové skóre</span>
+                        <span id="res-total-percent" class="font-serif text-3xl sm:text-4xl font-bold text-indigo-950 block mt-1">68 %</span>
+                        <span id="res-total-points" class="text-xs text-stone-500 block mt-0.5">20 / 30 správne</span>
+                    </div>
+                </div>
+
+                <!-- Category Breakdown -->
+                <div class="mt-8">
+                    <h3 class="font-serif font-bold text-lg sm:text-xl text-indigo-950 mb-1">
+                        Podrobný rozbor tvojej slovenčiny podľa kategórií:
+                    </h3>
+                    <p class="text-xs sm:text-sm text-stone-500 mb-6">
+                        Pozri sa, ktoré témy už zvládaš skvele a kde máš najväčší priestor na zlepšenie:
+                    </p>
+
+                    <div id="res-categories-bars" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- DYNAMIC RECOMMENDED COURSE BOX -->
+            <div class="bg-gradient-to-br from-indigo-950 to-indigo-900 text-white rounded-3xl p-6 sm:p-10 shadow-xl relative overflow-hidden">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+                    <div class="space-y-3 max-w-xl">
+                        <div class="inline-flex items-center gap-2 bg-amber-400 text-indigo-950 text-xs font-bold px-3.5 py-1 rounded-full uppercase tracking-wider">
+                            🎯 Osobné odporúčanie pre teba
+                        </div>
+                        <h2 id="rec-course-headline" class="font-serif text-2xl sm:text-3xl font-bold leading-snug">
+                            Najväčší problém ti robí kategória SA / SI → pozri si kurz „Záhada menom SA a SI“
+                        </h2>
+                        <p id="rec-course-desc" class="text-indigo-200 text-sm sm:text-base leading-relaxed">
+                            V tejto oblasti si mal/a najnižšiu úspešnosť. Nemusíš sa učiť celú slovenčinu odznova – za 4 týždne si v tomto kurze urobíš v zvratných slovesách a slovoslede úplný poriadok.
+                        </p>
+                        <ul id="rec-course-bullets" class="space-y-1.5 text-xs sm:text-sm text-indigo-100 pt-2"></ul>
+                    </div>
+
+                    <!-- Action Box -->
+                    <div class="bg-white text-indigo-950 rounded-2xl p-6 shrink-0 lg:w-80 shadow-lg">
+                        <span class="text-xs font-bold uppercase tracking-wider text-terracotta block mb-1">Odporúčaný kurz</span>
+                        <h3 id="rec-card-title" class="font-serif font-bold text-xl mb-2">Záhada menom SA a SI</h3>
+                        <div class="flex items-baseline gap-2 mb-4">
+                            <span id="rec-card-price" class="font-serif text-3xl font-bold text-indigo-950">99 €</span>
+                            <span id="rec-card-subprice" class="text-xs text-stone-500">/ 119 € PLUS</span>
+                        </div>
+                        <button id="rec-card-btn" onclick="openCourseModal('sasi')" class="w-full py-3.5 px-5 rounded-xl bg-terracotta hover:bg-terracottaHover text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2">
+                            <span>Zapísať sa do kurzu</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                        <p class="text-[11px] text-stone-500 text-center mt-3">
+                            Okamžitý prístup k PDF materiálom + pozvánka na Zoom lekcie.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secondary Actions: Review Mistakes or Retake -->
+            <div class="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-serif font-bold text-lg text-indigo-950">Chceš vidieť, kde presne si urobil/a chybu?</h3>
+                        <p class="text-xs sm:text-sm text-stone-500">Ku každej otázke sme pripravili aj krátke vysvetlenie pravidla.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button onclick="toggleMistakesReview()" class="px-5 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-indigo-950 font-semibold text-sm transition flex items-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                            <span id="toggle-review-btn-text">Zobraziť správne odpovede</span>
+                        </button>
+                        <button onclick="startQuizFlow()" class="px-4 py-2.5 rounded-xl border border-stone-300 hover:bg-stone-50 text-stone-600 font-medium text-sm transition">
+                            Zopakovať test
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hidden Mistakes Review Container -->
+                <div id="mistakes-review-container" class="hidden mt-6 pt-6 border-t border-stone-200 space-y-4"></div>
+            </div>
+
+        </div>
     </section>
 
     <!-- PLATOBNÝ MODAL (zatváraný krížikom v rohu) -->
@@ -667,10 +827,6 @@
             <div class="flex items-center gap-2">
                 <span class="font-serif font-bold text-indigo-950 text-sm">Slow Slovak</span>
                 <span>• Slovenčina zrozumiteľne a bez stresu © 2026</span>
-            </div>
-            <div class="flex items-center gap-6">
-                <a href="#kurzy" onclick="showView('home')" class="hover:text-terracotta transition">Kurzy a lekcie</a>
-                <button onclick="startQuizFlow()" class="hover:text-terracotta transition font-semibold text-indigo-950">Spustiť diagnostický test</button>
             </div>
         </div>
     </footer>

@@ -85,82 +85,279 @@ function handleWaitlistSubmit(e) {
     if (input) input.value = '';
 }
 
-// KVÍZOVÁ LOGIKA A CHECKOUT (z tvojho 5. commitu, prepojená s novým pohľadom)
-let currentIndex = 0;
-let userAnswers = {};
+// PLNÝ DIAGNOSTICKÝ KVÍZ (30 vs 10 otázok, nápovedy, tlačidlo Neviem) A DETAILNÉ VÝSLEDKY
+let activeQuestions = [];
+let currentQuestionIndex = 0;
+let userAnswers = [];
+let quizLengthMode = 30;
+let selectedCourseKey = 'sasi';
+let selectedPackagePrice = 99;
 
-function startQuiz() {
-    currentIndex = 0;
-    userAnswers = {};
-    showView('quiz');
-    renderQuestion();
+function setQuizLengthMode(count) {
+    quizLengthMode = count;
+    const btn30 = document.getElementById('mode-btn-30');
+    const btn10 = document.getElementById('mode-btn-10');
+
+    if (count === 30) {
+        btn30.className = 'px-2 py-0.5 rounded font-semibold bg-indigo-950 text-white';
+        btn10.className = 'px-2 py-0.5 rounded font-semibold text-stone-600 hover:bg-stone-100';
+    } else {
+        btn10.className = 'px-2 py-0.5 rounded font-semibold bg-indigo-950 text-white';
+        btn30.className = 'px-2 py-0.5 rounded font-semibold text-stone-600 hover:bg-stone-100';
+    }
+    startQuizFlow();
 }
 
 function startQuizFlow() {
-    startQuiz();
+    if (quizLengthMode === 10) {
+        const cats = ['sasi', 'sklonovanie', 'slovesa', 'predlozky', 'b1vazby'];
+        activeQuestions = [];
+        cats.forEach(c => {
+            const catQs = ALL_QUESTIONS.filter(q => q.cat === c).slice(0, 2);
+            activeQuestions.push(...catQs);
+        });
+    } else {
+        activeQuestions = [...ALL_QUESTIONS];
+    }
+
+    currentQuestionIndex = 0;
+    userAnswers = [];
+    showView('quiz');
+    renderCurrentQuestion();
 }
 
-function renderQuestion() {
-    const q = ALL_QUESTIONS[currentIndex];
-    document.getElementById('quiz-progress-text').textContent = `Otázka ${currentIndex + 1} / ${ALL_QUESTIONS.length} (${CATEGORIES[q.cat].name})`;
-    document.getElementById('quiz-question-text').textContent = q.q;
-    const box = document.getElementById('quiz-options');
-    box.innerHTML = '';
-    q.options.forEach((opt, idx) => {
+function startQuiz() {
+    startQuizFlow();
+}
+
+function renderCurrentQuestion() {
+    const qObj = activeQuestions[currentQuestionIndex];
+    const total = activeQuestions.length;
+
+    document.getElementById('quiz-current-num').textContent = currentQuestionIndex + 1;
+    document.getElementById('quiz-total-num').textContent = total;
+    document.getElementById('quiz-cat-badge').textContent = qObj.catName;
+    document.getElementById('quiz-level-badge').textContent = 'Úroveň ' + qObj.level;
+
+    const pct = ((currentQuestionIndex + 1) / total) * 100;
+    document.getElementById('quiz-progress-bar').style.width = pct + '%';
+
+    document.getElementById('quiz-question-text').textContent = qObj.q;
+    document.getElementById('quiz-question-hint').textContent = '💡 Kontekst: ' + qObj.hint;
+
+    const container = document.getElementById('quiz-options-container');
+    container.innerHTML = '';
+
+    const letters = ['A', 'B', 'C', 'D'];
+    qObj.options.forEach((optText, idx) => {
         const btn = document.createElement('button');
-        const sel = userAnswers[currentIndex] === idx;
-        btn.className = `w-full text-left p-4 rounded-xl border-2 font-medium transition ${sel ? 'border-terracotta bg-amber-50 font-bold' : 'border-stone-200 hover:border-stone-300'}`;
-        btn.textContent = opt;
-        btn.onclick = () => { userAnswers[currentIndex] = idx; renderQuestion(); };
-        box.appendChild(btn);
+        btn.className = 'w-full text-left p-4 sm:p-5 rounded-2xl border-2 border-stone-200 hover:border-terracotta hover:bg-amber-50/40 transition flex items-center gap-4 group';
+        btn.onclick = () => handleQuizAnswer(idx);
+
+        btn.innerHTML = `
+            <span class="w-9 h-9 rounded-xl bg-stone-100 group-hover:bg-terracotta group-hover:text-white text-indigo-950 font-bold text-sm flex items-center justify-center shrink-0 transition">
+                ${letters[idx]}
+            </span>
+            <span class="font-medium text-base sm:text-lg text-indigo-950">${optText}</span>
+        `;
+        container.appendChild(btn);
     });
 }
 
-function nextQuestion() {
-    if (userAnswers[currentIndex] === undefined) return;
-    if (currentIndex < ALL_QUESTIONS.length - 1) {
-        currentIndex++;
-        renderQuestion();
+function handleQuizAnswer(selectedIndex) {
+    const qObj = activeQuestions[currentQuestionIndex];
+    const isCorrect = selectedIndex === qObj.correct;
+
+    userAnswers.push({
+        qObj: qObj,
+        selectedIndex: selectedIndex,
+        isCorrect: isCorrect,
+        cat: qObj.cat
+    });
+
+    if (currentQuestionIndex + 1 < activeQuestions.length) {
+        currentQuestionIndex++;
+        renderCurrentQuestion();
     } else {
-        calculateResults();
+        calculateAndShowResults();
     }
 }
 
-function fillDemoResults() {
-    ALL_QUESTIONS.forEach((q, i) => {
-        userAnswers[i] = (q.cat === 'sasi' && i % 2 === 0) ? (q.correct + 1) % 4 : q.correct;
-    });
-    calculateResults();
-}
+function calculateAndShowResults() {
+    const totalQs = activeQuestions.length;
+    const totalCorrect = userAnswers.filter(a => a.isCorrect).length;
+    const overallPct = Math.round((totalCorrect / totalQs) * 100);
 
-function calculateResults() {
+    const categoryMeta = [
+        { key: 'slovesa', label: 'Slovesá a časy' },
+        { key: 'predlozky', label: 'Predložky (do/na, pre/za...)' },
+        { key: 'sklonovanie', label: 'Skloňovanie (pády a koncovky)' },
+        { key: 'sasi', label: 'Zvratné slovesá SA / SI a slovosled' },
+        { key: 'b1vazby', label: 'B1 Väzby a podmienky (keby, aby...)' }
+    ];
+
+    const catStats = categoryMeta.map(cm => {
+        const qsInCat = userAnswers.filter(a => a.cat === cm.key);
+        const correctInCat = qsInCat.filter(a => a.isCorrect).length;
+        const pct = qsInCat.length > 0 ? Math.round((correctInCat / qsInCat.length) * 100) : 0;
+        return {
+            ...cm,
+            correct: correctInCat,
+            total: qsInCat.length,
+            pct: pct
+        };
+    });
+
+    const sortedByWeakest = [...catStats].sort((a, b) => a.pct - b.pct);
+    const weakestCat = sortedByWeakest[0];
+    const secondWeakest = sortedByWeakest[1];
+
+    let levelLabel = 'A2 (Mierne pokročilý)';
+    if (overallPct < 42) {
+        levelLabel = 'A1 / A2- (Začiatočník)';
+    } else if (overallPct >= 78) {
+        levelLabel = 'B1 (Stredne pokročilý)';
+    }
+
+    document.getElementById('res-level-title').textContent = levelLabel;
+    document.getElementById('res-total-percent').textContent = overallPct + ' %';
+    document.getElementById('res-total-points').textContent = `${totalCorrect} / ${totalQs} správne`;
+
+    const diagEl = document.getElementById('res-summary-diagnosis');
+    if (overallPct >= 85) {
+        diagEl.innerHTML = `Skvelá práca! Tvoja slovenčina je na veľmi dobrej úrovni. Najviac bodov si stratil/a v téme <strong>${weakestCat.label.toLowerCase()}</strong> (${weakestCat.pct} %).`;
+    } else {
+        diagEl.innerHTML = `Tvoj výsledok zodpovedá úrovni <strong>${levelLabel}</strong>, ale najväčší problém ti momentálne robí <strong>${weakestCat.label.toLowerCase()} (${weakestCat.pct} %)</strong> a <strong>${secondWeakest.label.toLowerCase()} (${secondWeakest.pct} %)</strong>.`;
+    }
+
+    const barsContainer = document.getElementById('res-categories-bars');
+    barsContainer.innerHTML = '';
+
+    const sortedHighToLow = [...catStats].sort((a, b) => b.pct - a.pct);
+
+    sortedHighToLow.forEach(stat => {
+        const isWeakest = stat.key === weakestCat.key;
+        let barColor = 'bg-emerald-500';
+        let textColor = 'text-emerald-700';
+
+        if (stat.pct < 55) {
+            barColor = 'bg-terracotta';
+            textColor = 'text-terracotta';
+        } else if (stat.pct < 75) {
+            barColor = 'bg-amber-500';
+            textColor = 'text-amber-700';
+        }
+
+        const wrapperClass = isWeakest
+            ? 'p-4 rounded-2xl bg-red-50/90 border-2 border-terracotta/50'
+            : 'p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80';
+
+        const badgeHtml = isWeakest
+            ? `<span class="text-[11px] font-bold uppercase tracking-wider bg-terracotta text-white px-2.5 py-0.5 rounded-full ml-2">Tvoja hlavná slabina</span>`
+            : '';
+
+        const item = document.createElement('div');
+        item.className = wrapperClass;
+        item.innerHTML = `
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                <span class="font-semibold text-sm sm:text-base text-indigo-950 flex items-center">
+                    ${stat.label} ${badgeHtml}
+                </span>
+                <span class="font-bold text-sm sm:text-base ${textColor}">
+                    ${stat.pct} % <span class="text-xs font-normal text-stone-400">(${stat.correct}/${stat.total})</span>
+                </span>
+            </div>
+            <div class="w-full h-3 bg-white rounded-full overflow-hidden border border-stone-200/60">
+                <div class="${barColor} h-full rounded-full progress-bar-fill" style="width: ${Math.max(stat.pct, 6)}%"></div>
+            </div>
+        `;
+        barsContainer.appendChild(item);
+    });
+
+    let recCourseId = 'sasi';
+    let customRecHeadline = '';
+
+    if (weakestCat.key === 'sasi') {
+        recCourseId = 'sasi';
+        customRecHeadline = `Najväčší problém máš so SA/SI (${weakestCat.pct} %) → pozri si kurz „Záhada menom SA a SI“`;
+    } else if (weakestCat.key === 'b1vazby' || weakestCat.key === 'slovesa' || weakestCat.key === 'predlozky') {
+        if (overallPct < 45 && catStats.find(c => c.key === 'sasi').pct <= 50) {
+            recCourseId = 'sasi';
+            customRecHeadline = `Najprv si urob poriadok v základoch a SA/SI → odporúčame kurz „Záhada menom SA a SI“`;
+        } else {
+            recCourseId = 'b1';
+            customRecHeadline = `Najviac ťa brzdia ${weakestCat.label.toLowerCase()} (${weakestCat.pct} %) → pozri si kurz „Ťažké témy B1“`;
+        }
+    } else if (weakestCat.key === 'sklonovanie') {
+        const sasiScore = catStats.find(c => c.key === 'sasi').pct;
+        if (sasiScore <= 67) {
+            recCourseId = 'sasi';
+            customRecHeadline = `Skloňovanie aj SA/SI ti robia starosti → začni kurzom „Záhada menom SA a SI“`;
+        } else {
+            recCourseId = 'b1';
+            customRecHeadline = `Tvojou slabinou sú pády a väzby (${weakestCat.pct} %) → trénuj ich v kurze „Ťažké témy B1“`;
+        }
+    }
+
+    const recCourse = COURSES_DATA[recCourseId];
+    document.getElementById('rec-course-headline').textContent = customRecHeadline;
+    document.getElementById('rec-course-desc').textContent = recCourse.desc;
+    document.getElementById('rec-card-title').textContent = recCourse.title;
+    document.getElementById('rec-card-price').textContent = recCourse.packages[0].price + ' €';
+    document.getElementById('rec-card-subprice').textContent = recCourse.packages.length > 1 ? `/ ${recCourse.packages[1].price} € PLUS` : '/ kompletný kurz';
+    document.getElementById('rec-card-btn').setAttribute('onclick', `openCourseModal('${recCourseId}')`);
+
+    const bulletsEl = document.getElementById('rec-course-bullets');
+    bulletsEl.innerHTML = recCourse.bullets.map(b => `<li>${b}</li>`).join('');
+
+    renderMistakesReview();
     showView('results');
-    let total = 0;
-    const scores = { sasi: {c:0,t:0}, sklonovanie: {c:0,t:0}, slovesa: {c:0,t:0}, predlozky: {c:0,t:0}, b1: {c:0,t:0} };
-    ALL_QUESTIONS.forEach((q, i) => {
-        scores[q.cat].t++;
-        if (userAnswers[i] === q.correct) { total++; scores[q.cat].c++; }
-    });
-    let weakest = 'sasi', minPct = 101;
-    const bars = document.getElementById('res-category-bars');
-    bars.innerHTML = '';
-    Object.keys(scores).forEach(k => {
-        const pct = Math.round((scores[k].c / scores[k].t) * 100);
-        if (pct < minPct) { minPct = pct; weakest = k; }
-        bars.innerHTML += `<div class="p-3 bg-stone-50 rounded-xl flex justify-between items-center"><span>${CATEGORIES[k].name}</span><strong>${pct} %</strong></div>`;
-    });
-    document.getElementById('res-level-title').textContent = `Tvoj výsledok: Najväčší problém máš s témou ${CATEGORIES[weakest].name} (${minPct} %)`;
-    const rec = weakest === 'sasi' ? COURSES.sasi : COURSES.b1;
-    document.getElementById('res-recommendation-box').innerHTML = `
-        <h3 class="text-xl font-bold mb-2">Odporúčaný kurz: ${rec.title} (${rec.price} €)</h3>
-        <p class="text-sm text-stone-300 mb-4">Kurz je špeciálne navrhnutý tak, aby odstránil tvoje medzery v tejto oblasti.</p>
-        <button onclick="openCheckout('${rec.id}')" class="bg-amber-500 hover:bg-amber-400 text-stone-950 px-6 py-3 rounded-xl font-bold transition">Prihlásiť sa na kurz →</button>
-    `;
 }
 
+function renderMistakesReview() {
+    const container = document.getElementById('mistakes-review-container');
+    container.innerHTML = '';
+
+    userAnswers.forEach((ans, idx) => {
+        const q = ans.qObj;
+        const userText = ans.selectedIndex === -1 ? 'Neviem (Preskočené)' : q.options[ans.selectedIndex];
+        const correctText = q.options[q.correct];
+
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-2xl border text-sm ${ans.isCorrect ? 'bg-emerald-50/40 border-emerald-200' : 'bg-red-50/40 border-red-200'}`;
+        card.innerHTML = `
+            <div class="flex items-start justify-between gap-2 mb-1">
+                <span class="font-bold text-indigo-950">${idx + 1}. ${q.q}</span>
+                <span class="text-xs font-bold px-2 py-0.5 rounded shrink-0 ${ans.isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                    ${ans.isCorrect ? 'Správne' : 'Chyba'}
+                </span>
+            </div>
+            <div class="text-xs space-y-1 mt-2">
+                <p>Tvoja odpoveď: <strong class="${ans.isCorrect ? 'text-emerald-700' : 'text-red-700 line-through'}">${userText}</strong></p>
+                ${!ans.isCorrect ? `<p>Správna odpoveď: <strong class="text-emerald-700">${correctText}</strong></p>` : ''}
+                <p class="text-stone-600 pt-1 italic">💡 Vysvetlenie: ${q.exp}</p>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function toggleMistakesReview() {
+    const el = document.getElementById('mistakes-review-container');
+    const btnText = document.getElementById('toggle-review-btn-text');
+    if (el.classList.contains('hidden')) {
+        el.classList.remove('hidden');
+        btnText.textContent = 'Skryť správne odpovede';
+    } else {
+        el.classList.add('hidden');
+        btnText.textContent = 'Zobraziť správne odpovede';
+    }
+}
+
+// ZÁKLADNÝ CHECKOUT MODAL (pre Commit 8, pred finálnym rozšírením v Commite 9)
 function openCheckout(courseId) {
-    const key = courseId === 'individual' ? 'indiv' : courseId;
-    const c = COURSES[key] || COURSES.sasi;
+    const key = courseId === 'indiv' ? 'individual' : courseId;
+    const c = COURSES_DATA[key] || COURSES_DATA.sasi;
     document.getElementById('modal-title').textContent = `${c.title} (${c.price} €)`;
     document.getElementById('checkout-form-box').classList.remove('hidden');
     document.getElementById('checkout-success-box').classList.add('hidden');

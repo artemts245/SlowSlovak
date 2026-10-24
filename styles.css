@@ -10,7 +10,10 @@ body {
 }
 
 /* Bilingválne kotvy (podpora pre predchádzajúce aj nové triedy SK / UA / RU / EN) */
-.bilingual-sub, .lang-ua, .lang-ru, .lang-en {
+body :not(body).bilingual-sub,
+body .lang-ua,
+body .lang-ru,
+body .lang-en {
     display: none !important;
 }
 
