@@ -9,6 +9,8 @@ let userAnswers = [];
 let quizLengthMode = 30;
 let selectedCourseKey = 'sasi';
 let selectedPackagePrice = 99;
+let selectedPackageId = 'basic';
+let selectedPackageName = '';
 
 // INICIALIZÁCIA PO NAČÍTANÍ STRÁNKY
 document.addEventListener('DOMContentLoaded', () => {
@@ -542,10 +544,14 @@ function openCourseModal(courseKey) {
     pkgList.innerHTML = '';
 
     course.packages.forEach((pkg, idx) => {
-        if (idx === 0) selectedPackagePrice = pkg.price;
+        if (idx === 0) {
+            selectedPackagePrice = pkg.price;
+            selectedPackageId = pkg.id;
+            selectedPackageName = pkg.name;
+        }
         const card = document.createElement('div');
         card.className = `p-4 rounded-2xl border-2 cursor-pointer transition ${idx === 0 ? 'border-terracotta bg-amber-50/40' : 'border-stone-200 hover:border-stone-300'}`;
-        card.onclick = () => selectModalPackage(pkg.price, card);
+        card.onclick = () => selectModalPackage(pkg, card);
         card.innerHTML = `
             <div class="flex items-center justify-between mb-1">
                 <span class="font-bold text-sm text-indigo-950">${pkg.name}</span>
@@ -557,6 +563,7 @@ function openCourseModal(courseKey) {
     });
 
     document.getElementById('checkout-final-price').textContent = selectedPackagePrice + ' €';
+    resetCheckoutButton();
     document.getElementById('checkout-modal').classList.remove('hidden');
     if (window.lucide) lucide.createIcons();
 }
@@ -565,9 +572,11 @@ function openCheckout(courseKey) {
     openCourseModal(courseKey);
 }
 
-function selectModalPackage(price, clickedEl) {
-    selectedPackagePrice = price;
-    document.getElementById('checkout-final-price').textContent = price + ' €';
+function selectModalPackage(pkg, clickedEl) {
+    selectedPackagePrice = pkg.price;
+    selectedPackageId = pkg.id;
+    selectedPackageName = pkg.name;
+    document.getElementById('checkout-final-price').textContent = pkg.price + ' €';
     const children = document.getElementById('modal-packages-list').children;
     for (let c of children) {
         c.className = 'p-4 rounded-2xl border-2 cursor-pointer transition border-stone-200 hover:border-stone-300';
@@ -587,34 +596,88 @@ function closeCheckout() {
 // ==========================================
 // 1. SPRACOVANIE PLATBY A PRESMEROVANIE NA STRIPE
 // ==========================================
+const ORDER_KEY = 'slowslovak_pending_order';
+const ORDER_MAX_AGE_MS = 24 * 60 * 60 * 1000; // objednávka platí 24 hodín
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXFA0s9v8hDnFB-WqPW2NkeO_Ti2IMsrE6vkEzJ_GRw1Q6rqJP3ME_YRqRdd8nH1PQ/exec';
+
+// Stripe Payment Links: jeden link na každý balík (kľúč = "kurz:balík").
+// Kým je v odkaze "TVOJ_LINK", beží testovací režim bez platby.
+const STRIPE_LINKS = {
+    'sasi:basic':        'https://buy.stripe.com/TVOJ_LINK_SASI_BASIC',
+    'sasi:plus':         'https://buy.stripe.com/TVOJ_LINK_SASI_PLUS',
+    'b1:standard':       'https://buy.stripe.com/TVOJ_LINK_B1',
+    'individual:single': 'https://buy.stripe.com/TVOJ_LINK_INDIVIDUAL_SINGLE',
+    'individual:pack4':  'https://buy.stripe.com/TVOJ_LINK_INDIVIDUAL_PACK4'
+};
+
+function generateOrderId() {
+    return 'SS' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function setCheckoutButtonBusy(busy) {
+    const btn = document.querySelector('#modal-step-checkout form button[type="submit"]');
+    const txt = document.getElementById('checkout-submit-text');
+    if (!btn) return;
+    btn.disabled = busy;
+    btn.classList.toggle('opacity-60', busy);
+    btn.classList.toggle('cursor-not-allowed', busy);
+    if (txt) txt.textContent = busy ? 'Spracúvam…' : 'Zaplatiť kartou a vstúpiť do kurzu';
+}
+
+function resetCheckoutButton() {
+    setCheckoutButtonBusy(false);
+}
+
+// Po návrate tlačidlom "Späť" zo Stripe (bfcache) odblokujeme tlačidlo
+window.addEventListener('pageshow', (e) => {
+    if (e.persisted) resetCheckoutButton();
+});
+
+function loadPendingOrder() {
+    try {
+        const order = JSON.parse(localStorage.getItem(ORDER_KEY) || 'null');
+        if (!order || !order.email || !order.orderId) return null;
+        if (Date.now() - (order.createdAt || 0) > ORDER_MAX_AGE_MS) return null;
+        return order;
+    } catch (err) {
+        return null;
+    }
+}
+
 function processSimulatedPayment(event) {
     event.preventDefault();
 
     const name = document.getElementById('checkout-name').value.trim();
     const email = document.getElementById('checkout-email').value.trim();
-    const courseTitle = document.getElementById('modal-course-title').innerText;
-    const price = document.getElementById('checkout-final-price').innerText;
+    if (!name || !email) return;
+
+    setCheckoutButtonBusy(true);
+
+    const course = COURSES_DATA[selectedCourseKey];
+    const orderId = generateOrderId();
 
     // Uložíme údaje študenta do prehliadača pred presmerovaním na Stripe
-    localStorage.setItem('slowslovak_pending_order', JSON.stringify({
-        name: name,
-        email: email,
-        course: courseTitle,
-        price: price
-    }));
+    try {
+        localStorage.setItem(ORDER_KEY, JSON.stringify({
+            orderId: orderId,
+            name: name,
+            email: email,
+            courseKey: selectedCourseKey,
+            course: course.title,
+            packageId: selectedPackageId,
+            packageName: selectedPackageName,
+            price: selectedPackagePrice,
+            createdAt: Date.now()
+        }));
+    } catch (err) {
+        console.error('localStorage nie je dostupný:', err);
+    }
 
-    // Tvoje Stripe Payment Links (sem vložíš odkazy zo Stripe pre jednotlivé kurzy)
-    const stripeLinks = {
-        "Záhada menom SA a SI": "https://buy.stripe.com/TVOJ_LINK_PRE_SASI",
-        "Ťažké témy B1": "https://buy.stripe.com/TVOJ_LINK_PRE_B1",
-        "Individuálna lekcia": "https://buy.stripe.com/TVOJ_LINK_PRE_INDIVIDUAL"
-    };
-
-    const targetStripeUrl = stripeLinks[courseTitle];
+    const targetStripeUrl = STRIPE_LINKS[`${selectedCourseKey}:${selectedPackageId}`];
 
     // Ak už máš vložený reálny Stripe link, presmeruje študenta na Stripe:
-    if (targetStripeUrl && !targetStripeUrl.includes("TVOJ_LINK")) {
-        window.location.href = `${targetStripeUrl}?prefilled_email=${encodeURIComponent(email)}`;
+    if (targetStripeUrl && !targetStripeUrl.includes('TVOJ_LINK')) {
+        window.location.href = `${targetStripeUrl}?prefilled_email=${encodeURIComponent(email)}&client_reference_id=${encodeURIComponent(orderId)}`;
     } else {
         // Testovací režim (kým nemáš vložený Stripe link, rovno ukáže úspešnú obrazovku):
         completeOrder();
@@ -626,7 +689,7 @@ function processSimulatedPayment(event) {
 // ==========================================
 window.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
-    
+
     // V Stripe pri tvorbe Payment Linku nastav Redirect URL na:
     // https://artemts245.github.io/SlowSlovak/?payment=success
     if (urlParams.get('payment') === 'success') {
@@ -639,58 +702,104 @@ window.addEventListener('DOMContentLoaded', () => {
 // ==========================================
 // 3. ZOBRAZENIE MATERIÁLOV NA WEBE + ODOSLANIE MAILOV
 // ==========================================
-function completeOrder() {
-    const savedOrder = JSON.parse(localStorage.getItem('slowslovak_pending_order') || '{}');
-    const studentName = savedOrder.name || 'študent';
-    const studentEmail = savedOrder.email || '';
-    const courseName = savedOrder.course || 'Kurz Slow Slovak';
-
-    // 1. Otvoríme študentovi priamo na webe okno s linkom na Zoom a PDF materiálmi
+function showSuccessStep() {
     const modal = document.getElementById('checkout-modal');
     const stepCheckout = document.getElementById('modal-step-checkout');
     const stepSuccess = document.getElementById('modal-step-success');
+    if (!modal || !stepCheckout || !stepSuccess) return false;
+    modal.classList.remove('hidden');
+    stepCheckout.classList.add('hidden');
+    stepSuccess.classList.remove('hidden');
+    return true;
+}
 
-    if (modal && stepCheckout && stepSuccess) {
-        modal.classList.remove('hidden');
-        stepCheckout.classList.add('hidden');
-        stepSuccess.classList.remove('hidden');
+function renderSuccess(order) {
+    const label = document.getElementById('success-label');
+    const heading = document.getElementById('success-heading');
+    const intro = document.getElementById('success-intro');
+    const fallback = document.getElementById('success-fallback');
+    const materials = document.getElementById('success-materials');
+    const emailEl = document.getElementById('success-student-email');
 
-        const nameEl = document.getElementById('success-student-name');
-        const emailEl = document.getElementById('success-student-email');
-        if (nameEl) nameEl.innerText = studentName;
-        if (emailEl) emailEl.innerText = studentEmail;
+    if (order) {
+        if (label) label.textContent = 'Platba prebehla úspešne!';
+        if (heading) heading.textContent = `Vitaj v Slow Slovak, ${order.name || 'študent'}!`;
+        if (emailEl) emailEl.textContent = order.email;
+        if (intro) intro.classList.remove('hidden');
+        if (fallback) fallback.classList.add('hidden');
+        if (materials) materials.classList.remove('hidden');
+    } else {
+        // Návrat zo Stripe bez uloženej objednávky (iný prehliadač / zariadenie, vypršaná objednávka)
+        if (label) label.textContent = 'Návrat zo Stripe';
+        if (heading) heading.textContent = 'Ďakujeme!';
+        if (intro) intro.classList.add('hidden');
+        if (fallback) fallback.classList.remove('hidden');
+        if (materials) materials.classList.add('hidden');
+    }
+}
+
+function completeOrder() {
+    const order = loadPendingOrder();
+
+    if (!showSuccessStep()) return;
+    renderSuccess(order);
+    if (window.lucide) lucide.createIcons();
+
+    // Bez uloženej objednávky nevieme, komu e-mail poslať: dáme vedieť tebe, nech to vyriešiš ručne
+    if (!order) {
+        if (!sessionStorage.getItem('slowslovak_orphan_notified')) {
+            try { sessionStorage.setItem('slowslovak_orphan_notified', '1'); } catch (err) {}
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({
+                    access_key: '761c7100-3230-4f6c-8f40-90de140f8426',
+                    subject: '⚠️ Návrat zo Stripe bez údajov študenta',
+                    from_name: 'Slow Slovak Predaj',
+                    name: 'Neznámy študent',
+                    message: 'Niekto sa vrátil zo Stripe na ?payment=success, ale v jeho prehliadači chýba uložená objednávka (iné zariadenie/prehliadač alebo expirovaná). Skontroluj platby v Stripe a pošli mu materiály ručne.'
+                })
+            }).catch(err => console.error('Chyba pri odosielaní Web3Forms:', err));
+        }
+        return;
     }
 
-    if (!studentEmail) return;
+    // Správny kurz pre stiahnutie materiálu (po návrate zo Stripe je premenná inak výchozia)
+    if (COURSES_DATA[order.courseKey]) selectedCourseKey = order.courseKey;
 
-    // 2. ODOŠLE UVÍTACÍ E-MAIL ŠTUDENTOVI (Cez tvoj Google Apps Script)
-    fetch('https://script.google.com/macros/s/AKfycbzXFA0s9v8hDnFB-WqPW2NkeO_Ti2IMsrE6vkEzJ_GRw1Q6rqJP3ME_YRqRdd8nH1PQ/exec', {
+    // Objednávku zmažeme hneď, aby sa e-mail nemohol poslať druhýkrát (obnovenie stránky, dvojklik)
+    try { localStorage.removeItem(ORDER_KEY); } catch (err) {}
+
+    // ODOŠLE UVÍTACÍ E-MAIL ŠTUDENTOVI (cez Google Apps Script)
+    fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors', // Dôležité pre Google Apps Script
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({
-            name: studentName,
-            email: studentEmail,
-            course: courseName
+            orderId: order.orderId,
+            name: order.name,
+            email: order.email,
+            courseKey: order.courseKey,
+            course: order.course,
+            packageId: order.packageId,
+            packageName: order.packageName,
+            price: order.price
         })
-    }).catch(err => console.error("Chyba pri odosielaní Google mailu:", err));
+    }).catch(err => console.error('Chyba pri odosielaní Google mailu:', err));
 
-    // 3. ODOŠLE NOTIFIKÁCIU TEBE (Cez Web3Forms)
+    // ODOŠLE NOTIFIKÁCIU TEBE (cez Web3Forms)
     fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
-            access_key: "761c7100-3230-4f6c-8f40-90de140f8426",
-            subject: `🎉 Nová platba: ${courseName} (${studentName})`,
-            from_name: "Slow Slovak Predaj",
-            name: studentName,
-            email: studentEmail,
-            message: `Skvelá správa!\n\nŠtudent ${studentName} (${studentEmail}) práve zaplatil za kurz: ${courseName}.\n\nSystém mu automaticky odoslal uvítací e-mail z tvojho Gmailu (môžeš si ho skontrolovať v Odoslanej pošte).`
+            access_key: '761c7100-3230-4f6c-8f40-90de140f8426',
+            subject: `🎉 Nová platba: ${order.course} – ${order.packageName} (${order.name})`,
+            from_name: 'Slow Slovak Predaj',
+            name: order.name,
+            email: order.email,
+            message: `Skvelá správa!\n\nŠtudent ${order.name} (${order.email}) práve zaplatil.\nKurz: ${order.course}\nBalík: ${order.packageName} (${order.price} €)\nČíslo objednávky: ${order.orderId}\n\nSystém mu automaticky odoslal uvítací e-mail z tvojho Gmailu (môžeš si ho skontrolovať v Odoslanej pošte).${order.packageId === 'plus' || order.packageId === 'pack4' ? '\n\n⚠️ Balík obsahuje navyše konzultáciu/lekcie – treba s ním dohodnúť termín.' : ''}`
         })
-    }).catch(err => console.error("Chyba pri odosielaní Web3Forms:", err));
-
-    // Vymažeme čakajúcu objednávku z pamäte
-    localStorage.removeItem('slowslovak_pending_order');
+    }).catch(err => console.error('Chyba pri odosielaní Web3Forms:', err));
 }
 
 function downloadSampleMaterial() {
