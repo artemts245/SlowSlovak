@@ -1,93 +1,408 @@
 <!DOCTYPE html>
-<html lang="sk">
+<html lang="sk" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slow Slovak | Slovenčina zrozumiteľne a bez stresu</title>
+    <title>Slow Slovak | Slovenčina zrozumiteľne, pomaly a bez stresu</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter & Fraunces -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Fraunces', 'serif'],
+                    },
+                    colors: {
+                        cream: '#FAF8F5',
+                        warmgray: '#F2ECE4',
+                        indigoDark: '#1E1B4B',
+                        terracotta: '#D95D39',
+                        terracottaHover: '#B84A29',
+                        amberWarm: '#F59E0B',
+                        sage: '#059669'
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="min-h-screen flex flex-col">
-    <header class="sticky top-0 z-30 bg-[#FAF8F5]/90 backdrop-blur-md border-b border-stone-200/80">
-        <div class="max-w-6xl mx-auto px-4 py-3.5 flex items-center justify-between">
-            <span class="serif-heading text-xl font-bold">Slow Slovak</span>
-            <div class="flex items-center gap-1 bg-stone-200/70 p-1 rounded-full text-xs font-semibold">
-                <button onclick="setLangHelper('sk')" id="lang-btn-sk" class="px-2.5 py-1 rounded-full bg-stone-900 text-white transition">SK</button>
-                <button onclick="setLangHelper('ua')" id="lang-btn-ua" class="px-2.5 py-1 rounded-full text-stone-600 hover:text-stone-900 transition">+ UA</button>
-                <button onclick="setLangHelper('ru')" id="lang-btn-ru" class="px-2.5 py-1 rounded-full text-stone-600 hover:text-stone-900 transition">+ RU</button>
-                <button onclick="setLangHelper('en')" id="lang-btn-en" class="px-2.5 py-1 rounded-full text-stone-600 hover:text-stone-900 transition">+ EN</button>
+<body class="antialiased selection:bg-amber-200 selection:text-indigo-950 min-h-screen flex flex-col">
+
+    <!-- TOP BILINGUAL HELPER BAR S ROZBAĽOVACÍM MENU (DROPDOWN) -->
+    <div class="bg-indigo-950 text-indigo-100 text-xs sm:text-sm py-2 px-4 border-b border-indigo-900 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="font-medium">Režim pomalej slovenčiny (Slow Slovak)</span>
+            </div>
+
+            <!-- Dropdown pre výber pomocného jazyka -->
+            <div class="relative ml-auto" id="lang-dropdown-wrapper">
+                <div class="flex items-center gap-2">
+                    <span class="text-indigo-300 hidden sm:inline">Pomocný preklad na webe:</span>
+                    <button onclick="toggleLangDropdown()" id="lang-dropdown-trigger" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-900 hover:bg-indigo-800 border border-indigo-700 text-xs font-semibold text-white transition shadow-sm">
+                        <i data-lucide="globe" class="w-3.5 h-3.5 text-amber-400"></i>
+                        <span id="lang-current-label">🇸🇰 Iba SK</span>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-indigo-300"></i>
+                    </button>
+                </div>
+
+                <!-- Rozbaľovací zoznam jazykov -->
+                <div id="lang-dropdown-menu" class="hidden absolute right-0 mt-2 w-52 rounded-2xl bg-white text-indigo-950 shadow-xl border border-stone-200 py-1.5 z-50">
+                    <button onclick="setLangHelper('sk')" class="w-full px-3.5 py-2 text-left text-xs font-semibold hover:bg-amber-50 flex items-center justify-between transition">
+                        <span>🇸🇰 Iba slovenčina (SK)</span>
+                        <span id="lang-check-sk" class="text-terracotta font-bold">✓</span>
+                    </button>
+                    <button onclick="setLangHelper('ua')" class="w-full px-3.5 py-2 text-left text-xs font-semibold hover:bg-amber-50 flex items-center justify-between transition">
+                        <span>🇺🇦 + Ukrajinčina (UA)</span>
+                        <span id="lang-check-ua" class="text-terracotta font-bold opacity-0">✓</span>
+                    </button>
+                    <button onclick="setLangHelper('ru')" class="w-full px-3.5 py-2 text-left text-xs font-semibold hover:bg-amber-50 flex items-center justify-between transition">
+                        <span>🇷🇺 + Ruština (RU)</span>
+                        <span id="lang-check-ru" class="text-terracotta font-bold opacity-0">✓</span>
+                    </button>
+                    <button onclick="setLangHelper('en')" class="w-full px-3.5 py-2 text-left text-xs font-semibold hover:bg-amber-50 flex items-center justify-between transition">
+                        <span>🇬🇧 + Angličtina (EN)</span>
+                        <span id="lang-check-en" class="text-terracotta font-bold opacity-0">✓</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN NAVIGATION -->
+    <header class="bg-cream/90 backdrop-blur-md border-b border-stone-200/80 sticky top-[37px] sm:top-[41px] z-40">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" onclick="showView('home'); return false;" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-terracotta text-white flex items-center justify-center font-serif font-bold text-xl shadow-sm group-hover:scale-105 transition">
+                    S
+                </div>
+                <div>
+                    <span class="font-serif font-bold text-xl sm:text-2xl tracking-tight text-indigo-950 block leading-none">Slow Slovak</span>
+                    <span class="text-xs text-stone-500 font-medium block mt-0.5">Slovenčina bez stresu</span>
+                </div>
+            </a>
+
+            <!-- Nav Links -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-stone-700">
+                <a href="#ako-to-funguje" onclick="showView('home')" class="hover:text-terracotta transition">
+                    Ako to funguje
+                    <span class="lang-ua text-[11px] text-stone-400 font-normal">Як це працює</span>
+                    <span class="lang-ru text-[11px] text-stone-400 font-normal">Как это работает</span>
+                    <span class="lang-en text-[11px] text-stone-400 font-normal">How it works</span>
+                </a>
+                <a href="#kurzy" onclick="showView('home')" class="hover:text-terracotta transition">
+                    Kurzy a lekcie
+                    <span class="lang-ua text-[11px] text-stone-400 font-normal">Курси та уроки</span>
+                    <span class="lang-ru text-[11px] text-stone-400 font-normal">Курсы и уроки</span>
+                    <span class="lang-en text-[11px] text-stone-400 font-normal">Courses & Lessons</span>
+                </a>
+                <a href="#o-mne" onclick="showView('home')" class="hover:text-terracotta transition">
+                    O projekte
+                    <span class="lang-ua text-[11px] text-stone-400 font-normal">Про проєкт</span>
+                    <span class="lang-ru text-[11px] text-stone-400 font-normal">О проекте</span>
+                    <span class="lang-en text-[11px] text-stone-400 font-normal">About</span>
+                </a>
+            </nav>
+
+            <!-- CTA Button -->
+            <div class="flex items-center gap-3">
+                <button onclick="startQuizFlow()" class="bg-indigo-950 hover:bg-indigo-900 text-white text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl shadow-sm hover:shadow transition flex items-center gap-2">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+                    <span>Zisti svoju úroveň</span>
+                </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-16 flex-grow">
-        <section class="text-center max-w-3xl mx-auto mb-16">
-            <h1 class="serif-heading text-4xl sm:text-6xl font-bold mb-6">Slovenčina zrozumiteľne, pomaly a bez stresu.</h1>
-            <p class="text-lg text-stone-600 mb-4">Zabudni na bifľovanie tabuliek. Zisti, kde máš v slovenčine medzery, a zlepši sa na kurzoch zameraných na reálne rozprávanie.</p>
-            <p class="bilingual-sub bilingual-ua text-sm text-amber-800 bg-amber-50 p-2.5 rounded-xl mb-6">🇺🇦 Дізнайся свій рівень словацької мови та слабкі місця за допомогою безкоштовного тесту.</p>
-            <p class="bilingual-sub bilingual-ru text-sm text-amber-800 bg-amber-50 p-2.5 rounded-xl mb-6">🇷🇺 Узнай свой уровень словацкого языка и слабые места с помощью бесплатного теста.</p>
-            <p class="bilingual-sub bilingual-en text-sm text-amber-800 bg-amber-50 p-2.5 rounded-xl mb-6">🇬🇧 Discover your Slovak level and weak spots with our free diagnostic test.</p>
-            <button onclick="startQuiz()" class="bg-amber-600 hover:bg-amber-700 text-white px-8 py-4 rounded-2xl font-bold transition shadow-md cursor-pointer">👉 Zisti svoju úroveň (Test zdarma)</button>
-        </section>
-
-        <section id="kurzy" class="grid md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm">
-                <h3 class="serif-heading text-xl font-bold mb-2">Záhada menom SA a SI</h3>
-                <p class="text-sm text-stone-600 mb-4">Konečne pochopíš, kedy použiť sa, kedy si a kam ich dať vo vete.</p>
-                <p class="text-2xl font-extrabold mb-4">99 € / 119 €</p>
-                <button onclick="openCheckout('sasi')" class="w-full bg-stone-100 hover:bg-stone-900 hover:text-white py-2.5 rounded-xl text-sm font-bold transition">Vybrať kurz</button>
-            </div>
-            <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm">
-                <h3 class="serif-heading text-xl font-bold mb-2">Ťažké témy B1</h3>
-                <p class="text-sm text-stone-600 mb-4">Prekroč hranicu od „rozumiem“ k „plynule hovorím“.</p>
-                <p class="text-2xl font-extrabold mb-4">105 €</p>
-                <button onclick="openCheckout('b1')" class="w-full bg-stone-100 hover:bg-stone-900 hover:text-white py-2.5 rounded-xl text-sm font-bold transition">Vybrať kurz</button>
-            </div>
-            <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm">
-                <h3 class="serif-heading text-xl font-bold mb-2">Individuálna lekcia</h3>
-                <p class="text-sm text-stone-600 mb-4">Súkromná hodina cez Zoom prispôsobená tvojmu tempu.</p>
-                <p class="text-2xl font-extrabold mb-4">25 € / 45 min</p>
-                <button onclick="openCheckout('indiv')" class="w-full bg-stone-100 hover:bg-stone-900 hover:text-white py-2.5 rounded-xl text-sm font-bold transition">Objednať hodinu</button>
-            </div>
-        </section>
+    <!-- ========================================== -->
+    <!-- VIEW 1: LANDING PAGE (HOME)                -->
+    <!-- ========================================== -->
+    <main id="view-home" class="flex-grow">
         
-        <section id="view-quiz" class="hidden max-w-2xl mx-auto mt-12 bg-white p-8 rounded-3xl border border-stone-200 shadow-sm">
-            <div class="flex justify-between text-xs font-bold text-stone-500 mb-4">
-                <span id="quiz-progress-text">Otázka 1 / 30</span>
-                <button onclick="fillDemoResults()" class="text-amber-700 underline cursor-pointer">⚡ Rýchlo vyplniť (Demo výsledok)</button>
+        <!-- HERO SECTION -->
+        <section class="relative overflow-hidden pt-10 pb-16 sm:py-20 lg:py-24 px-4 sm:px-6">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+                
+                <!-- Left Column: Copy -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100/80 border border-amber-300/60 text-amber-900 text-xs sm:text-sm font-medium">
+                        <span class="flex h-2 w-2 rounded-full bg-terracotta"></span>
+                        <span>Poznáš z TikToku @slowslovak • Kurzy pre cudzincov (A1 – B1)</span>
+                    </div>
+
+                    <h1 class="font-serif text-3xl sm:text-5xl lg:text-[54px] font-bold text-indigo-950 leading-[1.15] tracking-tight">
+                        Slovenčina zrozumiteľne, <span class="text-terracotta underline decoration-amber-300/80 decoration-wavy decoration-2 underline-offset-8">pomaly</span> a bez stresu.
+                    </h1>
+
+                    <!-- Bilingual Helper Subtitles (UA / RU / EN) -->
+                    <div class="lang-ua bg-indigo-50/80 border-l-4 border-indigo-400 p-3 rounded-r-xl text-xs sm:text-sm text-indigo-900">
+                        <strong>🇺🇦 Українською:</strong> Словацька мова зрозуміло, повільно та без стресу. Пройди безкоштовний тест, дізнайся свої слабкі місця в граматиці та обери відповідний курс.
+                    </div>
+                    <div class="lang-ru bg-indigo-50/80 border-l-4 border-indigo-400 p-3 rounded-r-xl text-xs sm:text-sm text-indigo-900">
+                        <strong>🇷🇺 По-русски:</strong> Словацкий язык понятно, медленно и без стресса. Пройди бесплатный тест, узнай свои слабые места в грамматике и выбери подходящий курс.
+                    </div>
+                    <div class="lang-en bg-indigo-50/80 border-l-4 border-indigo-400 p-3 rounded-r-xl text-xs sm:text-sm text-indigo-900">
+                        <strong>🇬🇧 In English:</strong> Slovak language made clear, slow, and stress-free. Take the free diagnostic test, discover your exact grammar gaps, and pick the right course for you.
+                    </div>
+
+                    <p class="text-base sm:text-lg text-stone-600 leading-relaxed max-w-2xl">
+                        Zabudni na bifľovanie nekonečných tabuliek, ktorým nerozumieš. Sprav si náš <strong>bezplatný diagnostický test</strong>, zisti presne, kde máš v slovenčine medzery, a zlepši sa na kurzoch zameraných na reálne rozprávanie.
+                    </p>
+
+                    <div class="pt-2 flex flex-col sm:flex-row sm:items-center gap-4">
+                        <button onclick="startQuizFlow()" class="bg-terracotta hover:bg-terracottaHover text-white font-semibold text-base sm:text-lg px-7 py-4 rounded-2xl shadow-lg shadow-terracotta/25 hover:shadow-xl hover:-translate-y-0.5 transition flex items-center justify-center gap-3 group">
+                            <span>Zisti svoju úroveň (Test zdarma)</span>
+                            <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition"></i>
+                        </button>
+                        <a href="#kurzy" class="px-6 py-4 rounded-2xl border border-stone-300 hover:border-stone-400 bg-white/70 text-indigo-950 font-semibold text-base text-center transition">
+                            Pozrieť kurzy
+                        </a>
+                    </div>
+
+                    <div class="pt-2 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs sm:text-sm text-stone-500">
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="clock" class="w-4 h-4 text-emerald-600"></i>
+                            <span>Zaberie len 5 minút</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4 text-emerald-600"></i>
+                            <span>Rozbor v % podľa kategórií</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
+                            <span>Okamžite bez registrácie</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Interactive Preview Card -->
+                <div class="lg:col-span-5">
+                    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-indigo-950/5 border border-stone-200/90 relative">
+                        <div class="absolute -top-3.5 right-6 bg-amber-400 text-indigo-950 text-xs font-bold px-3 py-1 rounded-full shadow-sm uppercase tracking-wider">
+                            Ukážka tvojho výsledku
+                        </div>
+
+                        <div class="flex items-center justify-between pb-5 mb-5 border-b border-stone-100">
+                            <div>
+                                <span class="text-xs font-semibold uppercase tracking-wider text-stone-400">Diagnostika Slow Slovak</span>
+                                <h3 class="font-serif font-bold text-xl text-indigo-950 mt-0.5">Tvoja úroveň: <span class="text-terracotta">A2 (Mierne pokročilý)</span></h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center font-bold text-amber-800 text-lg">
+                                64%
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-stone-500 mb-4">
+                            Náš test ti nepovie len „máš A2“. Ukáže ti presne, čo už vieš a čo ťa brzdí pri rozprávaní:
+                        </p>
+
+                        <!-- Mock Category Bars -->
+                        <div class="space-y-3.5 text-sm">
+                            <div>
+                                <div class="flex justify-between font-medium mb-1">
+                                    <span>Slovesá a časy</span>
+                                    <span class="text-emerald-600 font-bold">91 %</span>
+                                </div>
+                                <div class="w-full h-2.5 bg-stone-100 rounded-full overflow-hidden">
+                                    <div class="bg-emerald-500 h-full rounded-full" style="width: 91%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between font-medium mb-1">
+                                    <span>Predložky (do, na, pre, za...)</span>
+                                    <span class="text-amber-600 font-bold">67 %</span>
+                                </div>
+                                <div class="w-full h-2.5 bg-stone-100 rounded-full overflow-hidden">
+                                    <div class="bg-amber-500 h-full rounded-full" style="width: 67%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between font-medium mb-1">
+                                    <span>Skloňovanie (pády a koncovky)</span>
+                                    <span class="text-orange-600 font-bold">48 %</span>
+                                </div>
+                                <div class="w-full h-2.5 bg-stone-100 rounded-full overflow-hidden">
+                                    <div class="bg-orange-500 h-full rounded-full" style="width: 48%"></div>
+                                </div>
+                            </div>
+
+                            <div class="p-3 rounded-xl bg-red-50/80 border border-red-200/80">
+                                <div class="flex justify-between font-semibold text-red-950 mb-1">
+                                    <span class="flex items-center gap-1.5">
+                                        <i data-lucide="alert-circle" class="w-4 h-4 text-terracotta"></i>
+                                        Zvratné slovesá SA / SI
+                                    </span>
+                                    <span class="text-terracotta font-bold">42 %</span>
+                                </div>
+                                <div class="w-full h-2.5 bg-white rounded-full overflow-hidden">
+                                    <div class="bg-terracotta h-full rounded-full" style="width: 42%"></div>
+                                </div>
+                                <p class="text-xs text-red-800 mt-2">
+                                    💡 <strong>Odporúčanie:</strong> Najväčší problém máš so SA/SI a slovosledom → odporúčame kurz <em>Záhada menom SA a SI</em>.
+                                </p>
+                            </div>
+                        </div>
+
+                        <button onclick="startQuizFlow()" class="mt-6 w-full py-3 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-950 font-semibold text-sm transition flex items-center justify-center gap-2">
+                            <span>Vyskúšať si test na vlastnej koži</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
             </div>
-            <h2 id="quiz-question-text" class="serif-heading text-2xl font-bold mb-6"></h2>
-            <div id="quiz-options" class="space-y-3 mb-6"></div>
-            <button onclick="nextQuestion()" id="quiz-next-btn" class="bg-stone-900 hover:bg-stone-800 text-white px-6 py-3 rounded-xl font-bold w-full transition">Ďalšia otázka →</button>
         </section>
 
-        <section id="view-results" class="hidden max-w-3xl mx-auto mt-12 bg-white p-8 rounded-3xl border border-stone-200 shadow-sm">
-            <h2 id="res-level-title" class="serif-heading text-3xl font-bold mb-2"></h2>
-            <p id="res-level-desc" class="text-stone-600 mb-6">Na základe tvojich odpovedí sme analyzovali tvoje silné stránky a oblasti na zlepšenie:</p>
-            <div id="res-category-bars" class="space-y-3 mb-8"></div>
-            <div id="res-recommendation-box" class="bg-stone-900 text-white p-6 rounded-2xl"></div>
+        <!-- SECTION: AKO TO FUNGUJE (3 STEPS) -->
+        <section id="ako-to-funguje" class="py-16 bg-warmgray/70 border-y border-stone-200/70 px-4 sm:px-6">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <span class="text-xs font-bold uppercase tracking-widest text-terracotta">Jednoduchý systém</span>
+                    <h2 class="font-serif text-2xl sm:text-4xl font-bold text-indigo-950 mt-2">
+                        Ako funguje Slow Slovak?
+                    </h2>
+                    <p class="lang-ua text-xs sm:text-sm text-indigo-800 mt-1">Як працює навчання: 1. Тест → 2. Розбір помилок → 3. Курс за твоїми слабкими місцями</p>
+                    <p class="lang-ru text-xs sm:text-sm text-indigo-800 mt-1">Как работает обучение: 1. Тест → 2. Разбор ошибок → 3. Курс по твоим слабым местам</p>
+                    <p class="lang-en text-xs sm:text-sm text-indigo-800 mt-1">How it works: 1. Diagnostic Test → 2. Detailed Breakdown → 3. Targeted Course</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+                    <div class="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-sm relative">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-900 font-serif font-bold text-xl flex items-center justify-center mb-5">
+                            1.
+                        </div>
+                        <h3 class="font-serif font-bold text-xl text-indigo-950 mb-2">Sprav si diagnostický test</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            Odpovedz na 30 praktických otázok od úrovne A1 po B1. Ak niečo nevieš, netipuj – klikni na „Neviem“, aby bol výsledok presný.
+                        </p>
+                        <p class="lang-ua text-xs text-stone-500 mt-3 pt-3 border-t border-stone-100">Відповідай на 30 запитань (A1–B1). Це безкоштовно та без реєстрації.</p>
+                        <p class="lang-ru text-xs text-stone-500 mt-3 pt-3 border-t border-stone-100">Ответь на 30 вопросов (A1–B1). Это бесплатно и без регистрации.</p>
+                        <p class="lang-en text-xs text-stone-500 mt-3 pt-3 border-t border-stone-100">Answer 30 practical questions (A1–B1). Free & no registration required.</p>
+                    </div>
+
+                    <div class="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-sm relative">
+                        <div class="w-12 h-12 rounded-2xl bg-terracotta/15 text-terracotta font-serif font-bold text-xl flex items-center justify-center mb-5">
+                            2.
+                        </div>
+                        <h3 class="font-serif font-bold text-xl text-indigo-950 mb-2">Získaj podrobný rozbor</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            Okamžite uvidíš percentá pre 5 kľúčových oblastí: slovesá, skloňovanie, predložky, slovíčka SA/SI a zložitejšie väzby B1.
+                        </p>
+                        <p class="lang-ua text-xs text-stone-500 mt-3 pt-3 border-t border-stone-100">Отримай точний розбір у відсотках за кожною темою та пояснення своїх помилок.</p>
+                        <p class="lang-ru text-xs text-stone-500 mt-3 pt-3 border-t border-stone-100">Получи точный разбор в процентах по каждой теме и объяснение своих ошибок.</p>
+                        <p class="lang-en text-xs text-stone-500 mt-3 pt-3 border-t border-stone-100">See your exact percentage score per grammar topic and review explanations.</p>
+                    </div>
+
+                    <div class="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-sm relative">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-950 font-serif font-bold text-xl flex items-center justify-center mb-5">
+                            3.
+                        </div>
+                        <h3 class="font-serif font-bold text-xl text-indigo-950 mb-2">Vyber si len to, čo potrebuješ</h3>
+                        <p class="text-stone-600 text-sm leading-relaxed">
+                            Nemusíš platiť stovky eur za všeobecný polročný kurz. Zapíš sa presne na tú tému, ktorá ti robí problém, a dostaň materiály aj prístup na Zoom.
+                        </p>
+                        <p class="lang-ua text-xs text-stone-500 mt-3 pt-3 border-t border-stone-100">Запишись саме на той курс, який закриє твої прогалини (Zoom + PDF матеріали).</p>
+                        <p class="lang-ru text-xs text-stone-500 mt-3 pt-3 border-t border-stone-100">Запишись именно на тот курс, который закроет твои пробелы (Zoom + PDF материалы).</p>
+                        <p class="lang-en text-xs text-stone-500 mt-3 pt-3 border-t border-stone-100">Enroll only in the specific course you need (Live Zoom + PDF worksheets).</p>
+                    </div>
+                </div>
+            </div>
         </section>
-    
+
+        <!-- SEKCIA KURZOV (z commitu 5, pred rozšírením v commite 7) -->
+        <section id="kurzy" class="py-16 px-4 sm:px-6 max-w-6xl mx-auto">
+            <h2 class="font-serif text-3xl font-bold text-indigo-950 mb-8 text-center">Ponuka kurzov Slow Slovak</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm">
+                    <h3 class="font-serif text-xl font-bold mb-2">Záhada menom SA a SI</h3>
+                    <p class="text-sm text-stone-600 mb-4">Konečne pochopíš, kedy použiť sa, kedy si a kam ich dať vo vete.</p>
+                    <p class="text-2xl font-extrabold mb-4">99 € / 119 €</p>
+                    <button onclick="openCheckout('sasi')" class="w-full bg-terracotta hover:bg-terracottaHover text-white py-2.5 rounded-xl text-sm font-bold transition">Vybrať kurz</button>
+                </div>
+                <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm">
+                    <h3 class="font-serif text-xl font-bold mb-2">Ťažké témy B1</h3>
+                    <p class="text-sm text-stone-600 mb-4">Prekroč hranicu od „rozumiem“ k „plynule hovorím“.</p>
+                    <p class="text-2xl font-extrabold mb-4">105 €</p>
+                    <button onclick="openCheckout('b1')" class="w-full bg-indigo-950 hover:bg-indigo-900 text-white py-2.5 rounded-xl text-sm font-bold transition">Vybrať kurz</button>
+                </div>
+                <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm">
+                    <h3 class="font-serif text-xl font-bold mb-2">Individuálna lekcia</h3>
+                    <p class="text-sm text-stone-600 mb-4">Súkromná hodina cez Zoom prispôsobená tvojmu tempu.</p>
+                    <p class="text-2xl font-extrabold mb-4">25 € / 45 min</p>
+                    <button onclick="openCheckout('indiv')" class="w-full bg-stone-100 hover:bg-stone-200 text-indigo-950 py-2.5 rounded-xl text-sm font-bold transition">Objednať hodinu</button>
+                </div>
+            </div>
+        </section>
+
     </main>
-    
-        <div id="checkout-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-            <div class="bg-white p-8 rounded-3xl max-w-md w-full shadow-2xl">
-                <h3 id="modal-title" class="serif-heading text-2xl font-bold mb-4">Zápis do kurzu</h3>
-                <div id="checkout-form-box">
-                    <input type="text" id="cust-name" placeholder="Tvoje meno" class="w-full border border-stone-300 p-3 rounded-xl mb-3 focus:outline-none focus:border-amber-600">
-                    <input type="email" id="cust-email" placeholder="Tvoj e-mail" class="w-full border border-stone-300 p-3 rounded-xl mb-4 focus:outline-none focus:border-amber-600">
-                    <button onclick="completeOrder()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-xl font-bold transition">Zaplatiť kartou</button>
-                </div>
-                <div id="checkout-success-box" class="hidden text-center">
-                    <p class="text-emerald-700 font-bold text-lg mb-2">✓ Platba prebehla úspešne!</p>
-                    <p class="text-sm text-stone-600 mb-4">Tvoj Zoom link na živý kurz: <br><strong class="text-stone-900">zoom.us/j/slow-slovak-live</strong></p>
-                    <button onclick="downloadMaterial()" class="w-full bg-stone-900 hover:bg-stone-800 text-white py-3 rounded-xl font-bold mb-2 transition">📥 Stiahnuť študijný ťahák</button>
-                </div>
-                <button onclick="closeCheckout()" class="w-full text-stone-500 hover:text-stone-800 text-xs mt-4 underline">Zavrieť okno</button>
+
+    <!-- KVÍZ A VÝSLEDKY (z commitu 5, pred vylepšením v commite 8) -->
+    <section id="view-quiz" class="hidden max-w-2xl mx-auto my-12 bg-white p-8 rounded-3xl border border-stone-200 shadow-sm w-full">
+        <div class="flex justify-between text-xs font-bold text-stone-500 mb-4">
+            <span id="quiz-progress-text">Otázka 1 / 30</span>
+            <button onclick="fillDemoResults()" class="text-terracotta underline cursor-pointer">⚡ Rýchlo vyplniť (Demo výsledok)</button>
+        </div>
+        <h2 id="quiz-question-text" class="font-serif text-2xl font-bold mb-6"></h2>
+        <div id="quiz-options" class="space-y-3 mb-6"></div>
+        <button onclick="nextQuestion()" id="quiz-next-btn" class="bg-indigo-950 hover:bg-indigo-900 text-white px-6 py-3 rounded-xl font-bold w-full transition">Ďalšia otázka →</button>
+    </section>
+
+    <section id="view-results" class="hidden max-w-3xl mx-auto my-12 bg-white p-8 rounded-3xl border border-stone-200 shadow-sm w-full">
+        <h2 id="res-level-title" class="font-serif text-3xl font-bold mb-2"></h2>
+        <p id="res-level-desc" class="text-stone-600 mb-6">Na základe tvojich odpovedí sme analyzovali tvoje silné stránky a oblasti na zlepšenie:</p>
+        <div id="res-category-bars" class="space-y-3 mb-8"></div>
+        <div id="res-recommendation-box" class="bg-indigo-950 text-white p-6 rounded-2xl"></div>
+    </section>
+
+    <!-- PLATOBNÝ MODAL (zatváraný krížikom v rohu) -->
+    <div id="checkout-modal" onclick="if(event.target === this) closeCheckout()" class="hidden fixed inset-0 bg-indigo-950/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-3xl max-w-md w-full shadow-2xl relative">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="modal-title" class="font-serif text-2xl font-bold text-indigo-950">Zápis do kurzu</h3>
+                <button onclick="closeCheckout()" title="Zavrieť" aria-label="Zavrieť" class="w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-500 hover:text-indigo-950 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div id="checkout-form-box">
+                <input type="text" id="cust-name" placeholder="Tvoje meno" class="w-full border border-stone-300 p-3 rounded-xl mb-3 focus:outline-none focus:border-indigo-950">
+                <input type="email" id="cust-email" placeholder="Tvoj e-mail" class="w-full border border-stone-300 p-3 rounded-xl mb-4 focus:outline-none focus:border-indigo-950">
+                <button onclick="completeOrder()" class="w-full bg-terracotta hover:bg-terracottaHover text-white py-3.5 rounded-xl font-bold transition">Zaplatiť kartou</button>
+            </div>
+            <div id="checkout-success-box" class="hidden text-center">
+                <p class="text-emerald-700 font-bold text-lg mb-2">✓ Platba prebehla úspešne!</p>
+                <p class="text-sm text-stone-600 mb-4">Tvoj Zoom link na živý kurz: <br><strong class="text-indigo-950">zoom.us/j/slow-slovak-live</strong></p>
+                <button onclick="downloadMaterial()" class="w-full bg-indigo-950 hover:bg-indigo-900 text-white py-3 rounded-xl font-bold transition">📥 Stiahnuť študijný ťahák</button>
             </div>
         </div>
-    
+    </div>
+
+    <!-- FOOTER (Bez návodu pre majiteľku) -->
+    <footer class="bg-white border-t border-stone-200/80 py-10 px-4 sm:px-6 mt-auto">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-500">
+            <div class="flex items-center gap-2">
+                <span class="font-serif font-bold text-indigo-950 text-sm">Slow Slovak</span>
+                <span>• Slovenčina zrozumiteľne a bez stresu © 2026</span>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="#kurzy" onclick="showView('home')" class="hover:text-terracotta transition">Kurzy a lekcie</a>
+                <button onclick="startQuizFlow()" class="hover:text-terracotta transition font-semibold text-indigo-950">Spustiť diagnostický test</button>
+            </div>
+        </div>
+    </footer>
+
     <script src="questions.js"></script>
     <script src="app.js"></script>
 </body>

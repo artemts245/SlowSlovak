@@ -1,35 +1,87 @@
-// Prepínanie bilingválnej jazykovej pomoci (SK / UA / RU / EN)
-function setLangHelper(lang) {
-    document.body.classList.remove('lang-ua', 'lang-ru', 'lang-en');
-    
-    ['sk', 'ua', 'ru', 'en'].forEach(l => {
-        const btn = document.getElementById('lang-btn-' + l);
-        if (btn) btn.className = 'px-2.5 py-1 rounded-full text-stone-600 hover:text-stone-900 transition';
+// INICIALIZÁCIA IKON A ROZBAĽOVACIEHO MENU JAZYKOV
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.lucide) lucide.createIcons();
+
+    // Zatvorenie jazykového dropdownu pri kliknutí mimo neho
+    document.addEventListener('click', (e) => {
+        const wrapper = document.getElementById('lang-dropdown-wrapper');
+        const menu = document.getElementById('lang-dropdown-menu');
+        if (wrapper && menu && !wrapper.contains(e.target)) {
+            menu.classList.add('hidden');
+        }
     });
 
-    if (lang === 'ua') {
-        document.body.classList.add('lang-ua');
-        document.getElementById('lang-btn-ua').className = 'px-2.5 py-1 rounded-full bg-amber-600 text-white transition';
-    } else if (lang === 'ru') {
-        document.body.classList.add('lang-ru');
-        document.getElementById('lang-btn-ru').className = 'px-2.5 py-1 rounded-full bg-amber-600 text-white transition';
-    } else if (lang === 'en') {
-        document.body.classList.add('lang-en');
-        document.getElementById('lang-btn-en').className = 'px-2.5 py-1 rounded-full bg-amber-600 text-white transition';
-    } else {
-        document.getElementById('lang-btn-sk').className = 'px-2.5 py-1 rounded-full bg-stone-900 text-white transition';
-    }
+    // Zatvorenie platobného modalu klávesom Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (typeof closeCourseModal === 'function') closeCourseModal();
+            if (typeof closeCheckout === 'function') closeCheckout();
+        }
+    });
+});
+
+function toggleLangDropdown() {
+    const menu = document.getElementById('lang-dropdown-menu');
+    if (menu) menu.classList.toggle('hidden');
 }
 
+// Prepínanie bilingválnej jazykovej pomoci cez Dropdown (SK / UA / RU / EN)
+function setLangHelper(lang) {
+    document.body.classList.remove('lang-ua', 'lang-ru', 'lang-en');
+
+    const normalized = (lang === 'none' || !lang) ? 'sk' : lang;
+    const labels = {
+        sk: '🇸🇰 Iba SK',
+        ua: '🇺🇦 + UA (Ukrajinčina)',
+        ru: '🇷🇺 + RU (Ruština)',
+        en: '🇬🇧 + EN (Angličtina)'
+    };
+
+    if (normalized === 'ua') document.body.classList.add('lang-ua');
+    if (normalized === 'ru') document.body.classList.add('lang-ru');
+    if (normalized === 'en') document.body.classList.add('lang-en');
+
+    const currentLabel = document.getElementById('lang-current-label');
+    if (currentLabel) currentLabel.textContent = labels[normalized] || labels.sk;
+
+    ['sk', 'ua', 'ru', 'en'].forEach(key => {
+        const check = document.getElementById('lang-check-' + key);
+        if (check) {
+            if (key === normalized) check.classList.remove('opacity-0');
+            else check.classList.add('opacity-0');
+        }
+    });
+
+    const menu = document.getElementById('lang-dropdown-menu');
+    if (menu) menu.classList.add('hidden');
+}
+
+// Prepínanie hlavných pohľadov (Domov / Kvíz / Výsledky)
+function showView(viewName) {
+    ['home', 'quiz', 'results'].forEach(v => {
+        const el = document.getElementById('view-' + v);
+        if (el) el.classList.add('hidden');
+    });
+
+    const target = document.getElementById('view-' + viewName);
+    if (target) target.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.lucide) lucide.createIcons();
+}
+
+// KVÍZOVÁ LOGIKA A CHECKOUT (z tvojho 5. commitu, prepojená s novým pohľadom)
 let currentIndex = 0;
 let userAnswers = {};
 
 function startQuiz() {
     currentIndex = 0;
     userAnswers = {};
-    document.getElementById('view-quiz').classList.remove('hidden');
-    document.getElementById('view-results').classList.add('hidden');
+    showView('quiz');
     renderQuestion();
+}
+
+function startQuizFlow() {
+    startQuiz();
 }
 
 function renderQuestion() {
@@ -41,7 +93,7 @@ function renderQuestion() {
     q.options.forEach((opt, idx) => {
         const btn = document.createElement('button');
         const sel = userAnswers[currentIndex] === idx;
-        btn.className = `w-full text-left p-4 rounded-xl border-2 font-medium transition ${sel ? 'border-amber-600 bg-amber-50 font-bold' : 'border-stone-200 hover:border-stone-300'}`;
+        btn.className = `w-full text-left p-4 rounded-xl border-2 font-medium transition ${sel ? 'border-terracotta bg-amber-50 font-bold' : 'border-stone-200 hover:border-stone-300'}`;
         btn.textContent = opt;
         btn.onclick = () => { userAnswers[currentIndex] = idx; renderQuestion(); };
         box.appendChild(btn);
@@ -66,8 +118,7 @@ function fillDemoResults() {
 }
 
 function calculateResults() {
-    document.getElementById('view-quiz').classList.add('hidden');
-    document.getElementById('view-results').classList.remove('hidden');
+    showView('results');
     let total = 0;
     const scores = { sasi: {c:0,t:0}, sklonovanie: {c:0,t:0}, slovesa: {c:0,t:0}, predlozky: {c:0,t:0}, b1: {c:0,t:0} };
     ALL_QUESTIONS.forEach((q, i) => {
@@ -92,15 +143,25 @@ function calculateResults() {
 }
 
 function openCheckout(courseId) {
-    const c = COURSES[courseId];
+    const key = courseId === 'individual' ? 'indiv' : courseId;
+    const c = COURSES[key] || COURSES.sasi;
     document.getElementById('modal-title').textContent = `${c.title} (${c.price} €)`;
     document.getElementById('checkout-form-box').classList.remove('hidden');
     document.getElementById('checkout-success-box').classList.add('hidden');
     document.getElementById('checkout-modal').classList.remove('hidden');
+    if (window.lucide) lucide.createIcons();
+}
+
+function openCourseModal(courseId) {
+    openCheckout(courseId);
 }
 
 function closeCheckout() {
     document.getElementById('checkout-modal').classList.add('hidden');
+}
+
+function closeCourseModal() {
+    closeCheckout();
 }
 
 function completeOrder() {
@@ -109,7 +170,7 @@ function completeOrder() {
 }
 
 function downloadMaterial() {
-    const blob = new Blob(['SLOW SLOVAK - Študijný ťahák SA vs. SI\n1. SA = akuzatív (umývam sa)\n2. SI = datív (umývam si ruky)'], { type: 'text/plain' });
+    const blob = new Blob(['SLOW SLOVAK - Študijný ťahák SA vs. SI\n1. SA = akuzatív (umývam sa)\n2. SI = datív (umývam si ruky)'], { type: 'text/plain;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'Slow_Slovak_Material.txt';
