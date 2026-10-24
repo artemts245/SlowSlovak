@@ -90,3 +90,20 @@ function calculateResults() {
         <button onclick="openCheckout('${rec.id}')" class="bg-amber-500 hover:bg-amber-400 text-stone-950 px-6 py-3 rounded-xl font-bold transition">Prihlásiť sa na kurz →</button>
     `;
 }
+
+function openCheckout(courseId) {
+    const c = COURSES[courseId];
+    document.getElementById('modal-title').textContent = `${c.title} (${c.price} €)`;
+    document.getElementById('checkout-form-box').classList.remove('hidden');
+    document.getElementById('checkout-success-box').classList.add('hidden');
+    document.getElementById('checkout-modal').classList.remove('hidden');
+}
+
+function closeCheckout() {
+    document.getElementById('checkout-modal').classList.add('hidden');
+}
+
+function completeOrder() {
+    document.getElementById('checkout-form-box').classList.add('hidden');
+    document.getElementById('checkout-success-box').classList.remove('hidden');
+}
