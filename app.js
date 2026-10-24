@@ -2,6 +2,9 @@
 const STORAGE_KEY_QUIZ = 'slow_slovak_quiz_state_v1';
 const STORAGE_KEY_LANG = 'slow_slovak_lang_v1';
 
+// ⚠️ SEM VLOŽ SVOJU PRODUKČNÚ URL ADRESU Z GOOGLE APPS SCRIPTU (MUSÍ KONČIŤ NA /exec)
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXFA0s9v8hDnFB-WqPW2NkeO_Ti2IMsrE6vkEzJ_GRw1Q6rqJP3ME_YRqRdd8nH1PQ/exec';
+
 // STAVOVÉ PREMENNÉ
 let activeQuestions = [];
 let currentQuestionIndex = 0;
@@ -9,6 +12,8 @@ let userAnswers = [];
 let quizLengthMode = 30;
 let selectedCourseKey = 'sasi';
 let selectedPackagePrice = 99;
+let selectedPackageId = 'basic';
+let selectedPackageName = '';
 
 // INICIALIZÁCIA PO NAČÍTANÍ STRÁNKY
 document.addEventListener('DOMContentLoaded', () => {
@@ -542,10 +547,14 @@ function openCourseModal(courseKey) {
     pkgList.innerHTML = '';
 
     course.packages.forEach((pkg, idx) => {
-        if (idx === 0) selectedPackagePrice = pkg.price;
+        if (idx === 0) {
+            selectedPackagePrice = pkg.price;
+            selectedPackageId = pkg.id || 'basic';
+            selectedPackageName = pkg.name || '';
+        }
         const card = document.createElement('div');
         card.className = `p-4 rounded-2xl border-2 cursor-pointer transition ${idx === 0 ? 'border-terracotta bg-amber-50/40' : 'border-stone-200 hover:border-stone-300'}`;
-        card.onclick = () => selectModalPackage(pkg.price, card);
+        card.onclick = () => selectModalPackage(pkg.price, card, pkg.id || (idx === 1 ? 'plus' : 'basic'), pkg.name || '');
         card.innerHTML = `
             <div class="flex items-center justify-between mb-1">
                 <span class="font-bold text-sm text-indigo-950">${pkg.name}</span>
@@ -565,8 +574,10 @@ function openCheckout(courseKey) {
     openCourseModal(courseKey);
 }
 
-function selectModalPackage(price, clickedEl) {
+function selectModalPackage(price, clickedEl, pkgId, pkgName) {
     selectedPackagePrice = price;
+    if (pkgId) selectedPackageId = pkgId;
+    if (pkgName) selectedPackageName = pkgName;
     document.getElementById('checkout-final-price').textContent = price + ' €';
     const children = document.getElementById('modal-packages-list').children;
     for (let c of children) {
@@ -585,23 +596,34 @@ function closeCheckout() {
 }
 
 // ==========================================
-// 1. SPRACOVANIE PLATBY A PRESMEROVANIE NA STRIPE
+// 7. SPRACOVANIE PLATBY A PRESMEROVANIE NA STRIPE
 // ==========================================
 function processSimulatedPayment(event) {
     event.preventDefault();
 
     const name = document.getElementById('checkout-name').value.trim();
     const email = document.getElementById('checkout-email').value.trim();
-    const courseTitle = document.getElementById('modal-course-title').innerText;
-    const price = document.getElementById('checkout-final-price').innerText;
+    const courseTitle = document.getElementById('modal-course-title').innerText.trim();
+    const price = document.getElementById('checkout-final-price').innerText.trim();
 
-    // Uložíme údaje študenta do prehliadača pred presmerovaním na Stripe
-    localStorage.setItem('slowslovak_pending_order', JSON.stringify({
-        name: name,
+    if (!email) {
+        alert('Prosím, zadaj svoju e-mailovú adresu.');
+        return;
+    }
+
+    const orderPayload = {
+        orderId: 'ORD-' + Date.now(),
+        name: name || 'študent',
         email: email,
         course: courseTitle,
+        courseKey: selectedCourseKey,
+        packageId: selectedPackageId,
+        packageName: selectedPackageName,
         price: price
-    }));
+    };
+
+    // Uložíme údaje študenta do prehliadača pred presmerovaním na Stripe
+    localStorage.setItem('slowslovak_pending_order', JSON.stringify(orderPayload));
 
     // Tvoje Stripe Payment Links (sem vložíš odkazy zo Stripe pre jednotlivé kurzy)
     const stripeLinks = {
@@ -616,13 +638,13 @@ function processSimulatedPayment(event) {
     if (targetStripeUrl && !targetStripeUrl.includes("TVOJ_LINK")) {
         window.location.href = `${targetStripeUrl}?prefilled_email=${encodeURIComponent(email)}`;
     } else {
-        // Testovací režim (kým nemáš vložený Stripe link, rovno ukáže úspešnú obrazovku):
+        // Testovací režim (kým nemáš vložený Stripe link, rovno ukáže úspešnú obrazovku a odošle e-mail):
         completeOrder();
     }
 }
 
 // ==========================================
-// 2. KONTROLA NÁVRATU ZO STRIPE
+// 8. KONTROLA NÁVRATU ZO STRIPE
 // ==========================================
 window.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -637,12 +659,12 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 3. ZOBRAZENIE MATERIÁLOV NA WEBE + ODOSLANIE MAILOV
+// 9. ZOBRAZENIE MATERIÁLOV NA WEBE + ODOSLANIE MAILOV
 // ==========================================
 function completeOrder() {
     const savedOrder = JSON.parse(localStorage.getItem('slowslovak_pending_order') || '{}');
     const studentName = savedOrder.name || 'študent';
-    const studentEmail = savedOrder.email || '';
+    const studentEmail = (savedOrder.email || '').trim();
     const courseName = savedOrder.course || 'Kurz Slow Slovak';
 
     // 1. Otvoríme študentovi priamo na webe okno s linkom na Zoom a PDF materiálmi
@@ -664,14 +686,19 @@ function completeOrder() {
     if (!studentEmail) return;
 
     // 2. ODOŠLE UVÍTACÍ E-MAIL ŠTUDENTOVI (Cez tvoj Google Apps Script)
-    fetch('https://script.google.com/macros/s/AKfycbzXFA0s9v8hDnFB-WqPW2NkeO_Ti2IMsrE6vkEzJ_GRw1Q6rqJP3ME_YRqRdd8nH1PQ/exec', {
+    fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors', // Dôležité pre Google Apps Script
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({
+            orderId: savedOrder.orderId || ('ORD-' + Date.now()),
             name: studentName,
             email: studentEmail,
-            course: courseName
+            course: courseName,
+            courseKey: savedOrder.courseKey || selectedCourseKey,
+            packageId: savedOrder.packageId || selectedPackageId,
+            packageName: savedOrder.packageName || selectedPackageName,
+            price: savedOrder.price || selectedPackagePrice
         })
     }).catch(err => console.error("Chyba pri odosielaní Google mailu:", err));
 
@@ -723,6 +750,7 @@ Slow Slovak`;
 function downloadMaterial() {
     downloadSampleMaterial();
 }
+
 // Odoslanie formulára cez Web3Forms bez presmerovania stránky
 function handleWeb3FormsSubmit(event) {
     event.preventDefault();
