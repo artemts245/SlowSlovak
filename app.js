@@ -107,3 +107,11 @@ function completeOrder() {
     document.getElementById('checkout-form-box').classList.add('hidden');
     document.getElementById('checkout-success-box').classList.remove('hidden');
 }
+
+function downloadMaterial() {
+    const blob = new Blob(['SLOW SLOVAK - Študijný ťahák SA vs. SI\n1. SA = akuzatív (umývam sa)\n2. SI = datív (umývam si ruky)'], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'Slow_Slovak_Material.txt';
+    a.click();
+}
