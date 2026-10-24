@@ -2,8 +2,7 @@
 const STORAGE_KEY_QUIZ = 'slow_slovak_quiz_state_v1';
 const STORAGE_KEY_LANG = 'slow_slovak_lang_v1';
 
-// ⚠️ SEM VLOŽ SVOJU PRODUKČNÚ URL ADRESU Z GOOGLE APPS SCRIPTU (MUSÍ KONČIŤ NA /exec)
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXFA0s9v8hDnFB-WqPW2NkeO_Ti2IMsrE6vkEzJ_GRw1Q6rqJP3ME_YRqRdd8nH1PQ/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZl20JlzZMR9ah2Kiy82GAk09s2jjUsIDGlJmN4xoIjDMcxRZyelJ_cqYd63mVUG6u/exec';
 
 // STAVOVÉ PREMENNÉ
 let activeQuestions = [];
