@@ -322,27 +322,299 @@
             </div>
         </section>
 
-        <!-- SEKCIA KURZOV (z commitu 5, pred rozšírením v commite 7) -->
-        <section id="kurzy" class="py-16 px-4 sm:px-6 max-w-6xl mx-auto">
-            <h2 class="font-serif text-3xl font-bold text-indigo-950 mb-8 text-center">Ponuka kurzov Slow Slovak</h2>
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm">
-                    <h3 class="font-serif text-xl font-bold mb-2">Záhada menom SA a SI</h3>
-                    <p class="text-sm text-stone-600 mb-4">Konečne pochopíš, kedy použiť sa, kedy si a kam ich dať vo vete.</p>
-                    <p class="text-2xl font-extrabold mb-4">99 € / 119 €</p>
-                    <button onclick="openCheckout('sasi')" class="w-full bg-terracotta hover:bg-terracottaHover text-white py-2.5 rounded-xl text-sm font-bold transition">Vybrať kurz</button>
+        <!-- SECTION: KURZY A LEKCIE (MAIN OFFER) -->
+        <section id="kurzy" class="py-16 sm:py-24 px-4 sm:px-6">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-widest text-terracotta">Aktuálna ponuka</span>
+                        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-indigo-950 mt-2">
+                            Kurzy a lekcie Slow Slovak
+                        </h2>
+                        <p class="text-stone-600 mt-2 max-w-xl">
+                            Živé online stretnutia cez Zoom v malých skupinách + prehľadné PDF materiály, cvičenia a záznamy z hodín.
+                        </p>
+                        <p class="lang-ua text-xs sm:text-sm text-indigo-800 mt-1">Живі уроки в Zoom у міні-групах + робочі зошити PDF та записи уроків.</p>
+                        <p class="lang-ru text-xs sm:text-sm text-indigo-800 mt-1">Живые уроки в Zoom в мини-группах + рабочие тетради PDF и записи уроков.</p>
+                        <p class="lang-en text-xs sm:text-sm text-indigo-800 mt-1">Live Zoom sessions in small groups + clear PDF worksheets and recordings.</p>
+                    </div>
+                    <button onclick="startQuizFlow()" class="self-start md:self-auto text-sm font-semibold text-terracotta hover:text-terracottaHover flex items-center gap-1.5 bg-amber-50 px-4 py-2.5 rounded-xl border border-amber-200">
+                        <i data-lucide="help-circle" class="w-4 h-4"></i>
+                        <span>Nevieš, ktorý si vybrať? Sprav si test</span>
+                    </button>
                 </div>
-                <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm">
-                    <h3 class="font-serif text-xl font-bold mb-2">Ťažké témy B1</h3>
-                    <p class="text-sm text-stone-600 mb-4">Prekroč hranicu od „rozumiem“ k „plynule hovorím“.</p>
-                    <p class="text-2xl font-extrabold mb-4">105 €</p>
-                    <button onclick="openCheckout('b1')" class="w-full bg-indigo-950 hover:bg-indigo-900 text-white py-2.5 rounded-xl text-sm font-bold transition">Vybrať kurz</button>
+
+                <!-- 3 Course Cards -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+                    
+                    <!-- COURSE 1: SA / SI -->
+                    <div class="bg-white rounded-3xl border-2 border-terracotta/80 shadow-xl shadow-terracotta/5 flex flex-col justify-between p-6 sm:p-8 relative">
+                        <div class="absolute -top-3.5 left-6 bg-terracotta text-white text-xs font-bold px-3.5 py-1 rounded-full uppercase tracking-wider">
+                            Najžiadanejší kurz
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between gap-2 text-xs font-semibold text-stone-500 mb-3">
+                                <span class="bg-amber-100 text-amber-900 px-2.5 py-1 rounded-lg">Úroveň A2 – B1</span>
+                                <span class="flex items-center gap-1"><i data-lucide="video" class="w-3.5 h-3.5 text-terracotta"></i> Zoom naživo + PDF</span>
+                            </div>
+
+                            <h3 class="font-serif text-2xl font-bold text-indigo-950 mb-2">
+                                Záhada menom SA a SI
+                            </h3>
+                            <p class="text-stone-600 text-sm leading-relaxed mb-5">
+                                Konečne pochopíš, kedy použiť <em>sa</em>, kedy <em>si</em>, kam presne ich dať v dlhej vete a prečo niektoré slovesá menia význam.
+                            </p>
+
+                            <div class="lang-ua text-xs bg-stone-50 p-2.5 rounded-xl text-stone-600 mb-4 border border-stone-200">
+                                <strong>Про що курс:</strong> Різниця між SA та SI, правильний порядок слів у реченні (правило 2-го місця) та зворотні дієслова без плутанини.
+                            </div>
+                            <div class="lang-ru text-xs bg-stone-50 p-2.5 rounded-xl text-stone-600 mb-4 border border-stone-200">
+                                <strong>О чем курс:</strong> Разница между SA и SI, правильный порядок слов в предложении (правило 2-го места) и возвратные глаголы без путаницы.
+                            </div>
+                            <div class="lang-en text-xs bg-stone-50 p-2.5 rounded-xl text-stone-600 mb-4 border border-stone-200">
+                                <strong>Course focus:</strong> Difference between SA and SI, natural word order (the second-position rule), and reflexive verbs in real conversation.
+                            </div>
+
+                            <ul class="space-y-2.5 text-sm text-stone-700 mb-6">
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-1"></i>
+                                    <span><strong>Rozdiel SA vs. SI:</strong> učiť vs. učiť sa, kúpiť vs. kúpiť si</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-1"></i>
+                                    <span><strong>Slovosled bez stresu:</strong> kam dať SA/SI vo vete</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-1"></i>
+                                    <span><strong>Zradné slovesá:</strong> páčiť sa mi, zdať sa, baviť sa</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-1"></i>
+                                    <span>4 týždne (4x 60 min Zoom) + pracovné listy a záznam</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="pt-5 border-t border-stone-100">
+                            <div class="flex items-baseline justify-between mb-4">
+                                <div>
+                                    <span class="text-xs text-stone-400 block">Cena kurzu</span>
+                                    <span class="font-serif text-3xl font-bold text-indigo-950">99 €</span>
+                                    <span class="text-xs text-stone-500"> / 119 € PLUS</span>
+                                </div>
+                                <span class="text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md font-medium">Voľné miesta</span>
+                            </div>
+
+                            <button onclick="openCourseModal('sasi')" class="w-full py-3.5 px-5 rounded-xl bg-terracotta hover:bg-terracottaHover text-white font-semibold text-sm shadow-md shadow-terracotta/20 transition flex items-center justify-center gap-2">
+                                <span>Zistiť viac a prihlásiť sa</span>
+                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- COURSE 2: ŤAŽKÉ TÉMY B1 -->
+                    <div class="bg-white rounded-3xl border border-stone-200/90 shadow-sm hover:shadow-md transition flex flex-col justify-between p-6 sm:p-8">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 text-xs font-semibold text-stone-500 mb-3">
+                                <span class="bg-indigo-100 text-indigo-950 px-2.5 py-1 rounded-lg">Stredne pokročilí (B1)</span>
+                                <span class="flex items-center gap-1"><i data-lucide="video" class="w-3.5 h-3.5 text-indigo-600"></i> Zoom naživo + PDF</span>
+                            </div>
+
+                            <h3 class="font-serif text-2xl font-bold text-indigo-950 mb-2">
+                                Ťažké témy B1
+                            </h3>
+                            <p class="text-stone-600 text-sm leading-relaxed mb-5">
+                                Rozumieš takmer všetkému, ale pri rozprávaní sa zasekávaš? Prekroč hranicu od pasívneho porozumenia k plynulému rozprávaniu.
+                            </p>
+
+                            <div class="lang-ua text-xs bg-stone-50 p-2.5 rounded-xl text-stone-600 mb-4 border border-stone-200">
+                                <strong>Про що курс:</strong> Доконаний і недоконаний вид дієслів, умовний спосіб (keby som...), складні прийменники та розмовна практика B1.
+                            </div>
+                            <div class="lang-ru text-xs bg-stone-50 p-2.5 rounded-xl text-stone-600 mb-4 border border-stone-200">
+                                <strong>О чем курс:</strong> Совершенный и несовершенный вид глаголов, условное наклонение (keby som...), сложные предлоги и разговорная практика B1.
+                            </div>
+                            <div class="lang-en text-xs bg-stone-50 p-2.5 rounded-xl text-stone-600 mb-4 border border-stone-200">
+                                <strong>Course focus:</strong> Verb aspect (písal vs. napísal), conditionals (keby som...), tricky prepositions, and active B1 speaking fluency.
+                            </div>
+
+                            <ul class="space-y-2.5 text-sm text-stone-700 mb-6">
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-1"></i>
+                                    <span><strong>Vid slovies:</strong> rozdiel medzi <em>robil som</em> a <em>urobil som</em></span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-1"></i>
+                                    <span><strong>Podmienky (Keby som...):</strong> zdvorilé prosby a želania</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-1"></i>
+                                    <span><strong>Predložky a pády v praxi:</strong> najčastejšie pasce B1</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-1"></i>
+                                    <span>5 týždňov (5x 60 min Zoom) + cvičenia a nahrávky</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="pt-5 border-t border-stone-100">
+                            <div class="flex items-baseline justify-between mb-4">
+                                <div>
+                                    <span class="text-xs text-stone-400 block">Cena kurzu</span>
+                                    <span class="font-serif text-3xl font-bold text-indigo-950">105 €</span>
+                                    <span class="text-xs text-stone-500"> / kompletný kurz</span>
+                                </div>
+                                <span class="text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md font-medium">Voľné miesta</span>
+                            </div>
+
+                            <button onclick="openCourseModal('b1')" class="w-full py-3.5 px-5 rounded-xl bg-indigo-950 hover:bg-indigo-900 text-white font-semibold text-sm transition flex items-center justify-center gap-2">
+                                <span>Zistiť viac a prihlásiť sa</span>
+                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- COURSE 3: INDIVIDUÁLNA LEKCIA -->
+                    <div class="bg-white rounded-3xl border border-stone-200/90 shadow-sm hover:shadow-md transition flex flex-col justify-between p-6 sm:p-8">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 text-xs font-semibold text-stone-500 mb-3">
+                                <span class="bg-stone-100 text-stone-800 px-2.5 py-1 rounded-lg">Všetky úrovne (A1 – B2)</span>
+                                <span class="flex items-center gap-1"><i data-lucide="user-check" class="w-3.5 h-3.5 text-emerald-600"></i> 1-on-1 Zoom</span>
+                            </div>
+
+                            <h3 class="font-serif text-2xl font-bold text-indigo-950 mb-2">
+                                Individuálna lekcia
+                            </h3>
+                            <p class="text-stone-600 text-sm leading-relaxed mb-5">
+                                Potrebuješ sa pripraviť na pracovný pohovor, lekára, skúšku na polícii alebo chceš len trénovať konverzáciu vlastným tempom?
+                            </p>
+
+                            <div class="lang-ua text-xs bg-stone-50 p-2.5 rounded-xl text-stone-600 mb-4 border border-stone-200">
+                                <strong>Про що урок:</strong> Індивідуальне заняття 1-на-1 (45 хвилин). Підготовка до співбесіди, іспиту або розмовна практика зі зворотним зв’язком.
+                            </div>
+                            <div class="lang-ru text-xs bg-stone-50 p-2.5 rounded-xl text-stone-600 mb-4 border border-stone-200">
+                                <strong>О чем урок:</strong> Индивидуальное занятие 1-на-1 (45 минут). Подготовка к собеседованию, экзамену или разговорная практика с обратной связью.
+                            </div>
+                            <div class="lang-en text-xs bg-stone-50 p-2.5 rounded-xl text-stone-600 mb-4 border border-stone-200">
+                                <strong>Lesson focus:</strong> Private 1-on-1 session (45 mins). Prepare for a job interview, official exam, or practice speaking with instant feedback.
+                            </div>
+
+                            <ul class="space-y-2.5 text-sm text-stone-700 mb-6">
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-1"></i>
+                                    <span><strong>100 % prispôsobené tebe:</strong> tému vyberáme podľa tvojho cieľa</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-1"></i>
+                                    <span><strong>Okamžitá spätná väzba:</strong> citlivá oprava chýb bez stresu</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-1"></i>
+                                    <span><strong>Poznámky z hodiny:</strong> všetky nové slovíčka a vety v dokumente</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-1"></i>
+                                    <span>Flexibilný výber termínu v kalendári po platbe</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="pt-5 border-t border-stone-100">
+                            <div class="flex items-baseline justify-between mb-4">
+                                <div>
+                                    <span class="text-xs text-stone-400 block">Cena lekcie</span>
+                                    <span class="font-serif text-3xl font-bold text-indigo-950">25 €</span>
+                                    <span class="text-xs text-stone-500"> / 45 minút</span>
+                                </div>
+                                <span class="text-xs text-stone-600 bg-stone-100 px-2.5 py-1 rounded-md font-medium">1-on-1</span>
+                            </div>
+
+                            <button onclick="openCourseModal('individual')" class="w-full py-3.5 px-5 rounded-xl bg-stone-100 hover:bg-stone-200 text-indigo-950 font-semibold text-sm transition flex items-center justify-center gap-2">
+                                <span>Rezervovať termín</span>
+                                <i data-lucide="calendar" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm">
-                    <h3 class="font-serif text-xl font-bold mb-2">Individuálna lekcia</h3>
-                    <p class="text-sm text-stone-600 mb-4">Súkromná hodina cez Zoom prispôsobená tvojmu tempu.</p>
-                    <p class="text-2xl font-extrabold mb-4">25 € / 45 min</p>
-                    <button onclick="openCheckout('indiv')" class="w-full bg-stone-100 hover:bg-stone-200 text-indigo-950 py-2.5 rounded-xl text-sm font-bold transition">Objednať hodinu</button>
+
+                <!-- COMING SOON SECTION (PRIPRAVUJEME) -->
+                <div class="mt-16 bg-indigo-950 text-white rounded-3xl p-6 sm:p-10 shadow-xl">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        <div class="lg:col-span-7 space-y-4">
+                            <div class="inline-flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
+                                <i data-lucide="hourglass" class="w-4 h-4"></i>
+                                <span>Pripravujeme ďalšie kurzy</span>
+                            </div>
+                            <h3 class="font-serif text-2xl sm:text-3xl font-bold">
+                                Čakáš na skloňovanie alebo skúšku A2?
+                            </h3>
+                            <p class="text-indigo-200 text-sm leading-relaxed">
+                                Tieto 3 špecializované minikurzy práve dokončujeme. Klikni na ten, ktorý ťa zaujíma, nechaj nám e-mail a dáme ti vedieť ako prvému (so zľavou 15 % pri spustení).
+                            </p>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                                <button onclick="selectWaitlistTopic('Skloňovanie bez bolesti')" class="waitlist-topic-btn text-left p-3.5 rounded-2xl bg-indigo-900/70 hover:bg-indigo-800 border border-indigo-700/80 transition group">
+                                    <span class="text-xs text-amber-400 font-semibold block mb-1">⏳ Čoskoro</span>
+                                    <span class="font-bold text-sm block group-hover:text-amber-300 transition">Skloňovanie bez bolesti</span>
+                                    <span class="text-[11px] text-indigo-300 block mt-1">Systém na pády a koncovky</span>
+                                </button>
+                                <button onclick="selectWaitlistTopic('Príprava na skúšku A2')" class="waitlist-topic-btn text-left p-3.5 rounded-2xl bg-indigo-900/70 hover:bg-indigo-800 border border-indigo-700/80 transition group">
+                                    <span class="text-xs text-amber-400 font-semibold block mb-1">⏳ Čoskoro</span>
+                                    <span class="font-bold text-sm block group-hover:text-amber-300 transition">Príprava na skúšku A2</span>
+                                    <span class="text-[11px] text-indigo-300 block mt-1">Oficiálne testy a občianstvo</span>
+                                </button>
+                                <button onclick="selectWaitlistTopic('Chyby rusky a ukrajinsky hovoriacich')" class="waitlist-topic-btn text-left p-3.5 rounded-2xl bg-indigo-900/70 hover:bg-indigo-800 border border-indigo-700/80 transition group">
+                                    <span class="text-xs text-amber-400 font-semibold block mb-1">⏳ Čoskoro</span>
+                                    <span class="font-bold text-sm block group-hover:text-amber-300 transition">Chyby slovanských študentov</span>
+                                    <span class="text-[11px] text-indigo-300 block mt-1">Falošní priatelia (slovíčka)</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-5 bg-indigo-900/60 border border-indigo-800 p-6 rounded-2xl">
+                            <h4 class="font-semibold text-base mb-1">Zapíš sa na čakaciu listinu</h4>
+                            <p id="waitlist-selected-label" class="text-xs text-amber-300 mb-4">Vybraná téma: Všetky pripravované kurzy</p>
+                            <form onsubmit="handleWaitlistSubmit(event)" class="space-y-3">
+                                <input type="email" id="waitlist-email" required placeholder="Tvoj e-mail (napr. anna@gmail.com)" class="w-full px-4 py-3 rounded-xl bg-indigo-950/90 border border-indigo-700 text-white placeholder-indigo-400 text-sm focus:outline-none focus:border-amber-400">
+                                <button type="submit" class="w-full py-3 px-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-indigo-950 font-bold text-sm transition">
+                                    Upozorniť ma pri spustení
+                                </button>
+                            </form>
+                            <p id="waitlist-success" class="hidden text-xs text-emerald-300 mt-3 font-medium">
+                                ✨ Ďakujeme! Tvoj e-mail sme zapísali. Ozveme sa ti hneď, ako kurz otvoríme.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: O PROJEKTE SLOW SLOVAK -->
+        <section id="o-mne" class="py-16 bg-warmgray/60 border-t border-stone-200/80 px-4 sm:px-6">
+            <div class="max-w-4xl mx-auto bg-white rounded-3xl p-6 sm:p-10 border border-stone-200/80 shadow-sm flex flex-col md:flex-row items-center gap-8">
+                <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-3xl bg-gradient-to-br from-terracotta to-amber-500 text-white flex flex-col items-center justify-center shrink-0 shadow-md">
+                    <i data-lucide="mic" class="w-10 h-10 mb-1"></i>
+                    <span class="font-serif font-bold text-sm">@slowslovak</span>
+                </div>
+                <div class="space-y-3 text-center md:text-left">
+                    <span class="text-xs font-bold uppercase tracking-widest text-terracotta">Kto ťa bude učiť</span>
+                    <h2 class="font-serif text-2xl sm:text-3xl font-bold text-indigo-950">
+                        Prečo vznikol projekt Slow Slovak?
+                    </h2>
+                    <p class="text-stone-600 text-sm sm:text-base leading-relaxed">
+                        Možno ma už poznáš z videí na TikToku. Moja filozofia je jednoduchá: cudzí jazyk sa nenaučíš tým, že na teba niekto rozpráva rýchlo a zahltí ťa desiatimi výnimkami naraz. Učím slovenčinu tak, aby si jej <strong>naozaj rozumel/a v bežnom živote</strong> – v práci, v obchode, u lekára či s priateľmi.
+                    </p>
+                    <p class="lang-ua text-xs text-stone-500 pt-2">
+                        Моя філософія проста: мову не можна вивчити у стресі. Ми розбираємо логіку словацької мови спокійно та на реальних прикладах із життя в Словаччині.
+                    </p>
+                    <p class="lang-ru text-xs text-stone-500 pt-2">
+                        Моя философия проста: язык нельзя выучить в стрессе. Мы разбираем логику словацкого языка спокойно и на реальных примерах из жизни в Словакии.
+                    </p>
+                    <p class="lang-en text-xs text-stone-500 pt-2">
+                        My philosophy is simple: you don't learn a language by being overwhelmed. We break down real-life Slovak calmly, step by step.
+                    </p>
                 </div>
             </div>
         </section>

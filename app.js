@@ -69,6 +69,22 @@ function showView(viewName) {
     if (window.lucide) lucide.createIcons();
 }
 
+// ČAKACIA LISTINA (WAITLIST PRE PRIPRAVOVANÉ KURZY)
+function selectWaitlistTopic(topic) {
+    const label = document.getElementById('waitlist-selected-label');
+    const input = document.getElementById('waitlist-email');
+    if (label) label.textContent = 'Vybraná téma: ' + topic;
+    if (input) input.focus();
+}
+
+function handleWaitlistSubmit(e) {
+    e.preventDefault();
+    const success = document.getElementById('waitlist-success');
+    const input = document.getElementById('waitlist-email');
+    if (success) success.classList.remove('hidden');
+    if (input) input.value = '';
+}
+
 // KVÍZOVÁ LOGIKA A CHECKOUT (z tvojho 5. commitu, prepojená s novým pohľadom)
 let currentIndex = 0;
 let userAnswers = {};
