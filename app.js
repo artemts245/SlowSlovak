@@ -354,38 +354,105 @@ function toggleMistakesReview() {
     }
 }
 
-// ZÁKLADNÝ CHECKOUT MODAL (pre Commit 8, pred finálnym rozšírením v Commite 9)
-function openCheckout(courseId) {
-    const key = courseId === 'indiv' ? 'individual' : courseId;
-    const c = COURSES_DATA[key] || COURSES_DATA.sasi;
-    document.getElementById('modal-title').textContent = `${c.title} (${c.price} €)`;
-    document.getElementById('checkout-form-box').classList.remove('hidden');
-    document.getElementById('checkout-success-box').classList.add('hidden');
+// PLNÝ MULTI-TIER CHECKOUT MODAL (zatváranie krížikom v rohu) A DYNAMICKÉ SŤAHOVANIE MATERIÁLOV
+function openCourseModal(courseKey) {
+    const normalizedKey = courseKey === 'indiv' ? 'individual' : courseKey;
+    selectedCourseKey = COURSES_DATA[normalizedKey] ? normalizedKey : 'sasi';
+    const course = COURSES_DATA[selectedCourseKey];
+
+    document.getElementById('modal-course-badge').textContent = course.badge;
+    document.getElementById('modal-course-title').textContent = course.title;
+    document.getElementById('modal-course-desc').textContent = course.desc;
+
+    document.getElementById('modal-step-checkout').classList.remove('hidden');
+    document.getElementById('modal-step-success').classList.add('hidden');
+
+    const pkgList = document.getElementById('modal-packages-list');
+    pkgList.innerHTML = '';
+
+    course.packages.forEach((pkg, idx) => {
+        if (idx === 0) selectedPackagePrice = pkg.price;
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-2xl border-2 cursor-pointer transition ${idx === 0 ? 'border-terracotta bg-amber-50/40' : 'border-stone-200 hover:border-stone-300'}`;
+        card.onclick = () => selectModalPackage(pkg.price, card);
+        card.innerHTML = `
+            <div class="flex items-center justify-between mb-1">
+                <span class="font-bold text-sm text-indigo-950">${pkg.name}</span>
+                <span class="font-serif font-bold text-lg text-terracotta">${pkg.price} €</span>
+            </div>
+            <p class="text-xs text-stone-500">${pkg.desc}</p>
+        `;
+        pkgList.appendChild(card);
+    });
+
+    document.getElementById('checkout-final-price').textContent = selectedPackagePrice + ' €';
     document.getElementById('checkout-modal').classList.remove('hidden');
     if (window.lucide) lucide.createIcons();
 }
 
-function openCourseModal(courseId) {
-    openCheckout(courseId);
+function openCheckout(courseKey) {
+    openCourseModal(courseKey);
 }
 
-function closeCheckout() {
-    document.getElementById('checkout-modal').classList.add('hidden');
+function selectModalPackage(price, clickedEl) {
+    selectedPackagePrice = price;
+    document.getElementById('checkout-final-price').textContent = price + ' €';
+    const children = document.getElementById('modal-packages-list').children;
+    for (let c of children) {
+        c.className = 'p-4 rounded-2xl border-2 cursor-pointer transition border-stone-200 hover:border-stone-300';
+    }
+    clickedEl.className = 'p-4 rounded-2xl border-2 cursor-pointer transition border-terracotta bg-amber-50/40';
 }
 
 function closeCourseModal() {
-    closeCheckout();
+    const modal = document.getElementById('checkout-modal');
+    if (modal) modal.classList.add('hidden');
 }
 
-function completeOrder() {
-    document.getElementById('checkout-form-box').classList.add('hidden');
-    document.getElementById('checkout-success-box').classList.remove('hidden');
+function closeCheckout() {
+    closeCourseModal();
+}
+
+function processSimulatedPayment(e) {
+    e.preventDefault();
+    const name = document.getElementById('checkout-name').value;
+    const email = document.getElementById('checkout-email').value;
+
+    document.getElementById('success-student-name').textContent = name;
+    document.getElementById('success-student-email').textContent = email;
+
+    document.getElementById('modal-step-checkout').classList.add('hidden');
+    document.getElementById('modal-step-success').classList.remove('hidden');
+    if (window.lucide) lucide.createIcons();
+}
+
+function downloadSampleMaterial() {
+    const courseTitle = COURSES_DATA[selectedCourseKey].title;
+    const content = `SLOW SLOVAK - ŠTUDIJNÝ MATERIÁL
+Kurz: ${courseTitle}
+========================================
+
+Ďakujeme za prihlásenie! Tu je tvoj prehľad k prvej lekcii:
+
+1. Pravidlo druhého miesta vo vete (SA / SI):
+   V slovenčine dávame zvratné zámená SA a SI na druhé miesto vo vete.
+   Príklad: Včera SOM SA stretol s kamarátom.
+
+2. Rozdiel SA vs. SI:
+   - Umyť SA (celé telo) vs. Umyť SI ruky (konkrétny predmet)
+   - Kúpiť SI kávu (pre seba)
+
+Teším sa na teba na našom Zoom stretnutí!
+Slow Slovak`;
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Slow-Slovak-Materialy-${selectedCourseKey}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
 }
 
 function downloadMaterial() {
-    const blob = new Blob(['SLOW SLOVAK - Študijný ťahák SA vs. SI\n1. SA = akuzatív (umývam sa)\n2. SI = datív (umývam si ruky)'], { type: 'text/plain;charset=utf-8' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'Slow_Slovak_Material.txt';
-    a.click();
+    downloadSampleMaterial();
 }

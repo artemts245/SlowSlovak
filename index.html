@@ -79,7 +79,7 @@
         </div>
     </div>
 
-    <!-- MAIN NAVIGATION -->
+    <!-- MAIN NAVIGATION (Čistá hlavička bez duplicitného CTA tlačidla) -->
     <header class="bg-cream/90 backdrop-blur-md border-b border-stone-200/80 sticky top-[37px] sm:top-[41px] z-40">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
             <!-- Brand Logo -->
@@ -94,7 +94,7 @@
             </a>
 
             <!-- Nav Links -->
-            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-stone-700">
+            <nav class="flex items-center gap-5 sm:gap-8 text-xs sm:text-sm font-medium text-stone-700">
                 <a href="#ako-to-funguje" onclick="showView('home')" class="hover:text-terracotta transition">
                     Ako to funguje
                     <span class="lang-ua text-[11px] text-stone-400 font-normal">Як це працює</span>
@@ -114,14 +114,6 @@
                     <span class="lang-en text-[11px] text-stone-400 font-normal">About</span>
                 </a>
             </nav>
-
-            <!-- CTA Button -->
-            <div class="flex items-center gap-3">
-                <button onclick="startQuizFlow()" class="bg-indigo-950 hover:bg-indigo-900 text-white text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl shadow-sm hover:shadow transition flex items-center gap-2">
-                    <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
-                    <span>Zisti svoju úroveň</span>
-                </button>
-            </div>
         </div>
     </header>
 
@@ -134,7 +126,7 @@
         <section class="relative overflow-hidden pt-10 pb-16 sm:py-20 lg:py-24 px-4 sm:px-6">
             <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
                 
-                <!-- Left Column: Copy -->
+                <!-- Left Column: Copy + Jediné hlavné CTA tlačidlo -->
                 <div class="lg:col-span-7 space-y-6">
                     <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100/80 border border-amber-300/60 text-amber-900 text-xs sm:text-sm font-medium">
                         <span class="flex h-2 w-2 rounded-full bg-terracotta"></span>
@@ -160,14 +152,13 @@
                         Zabudni na bifľovanie nekonečných tabuliek, ktorým nerozumieš. Sprav si náš <strong>bezplatný diagnostický test</strong>, zisti presne, kde máš v slovenčine medzery, a zlepši sa na kurzoch zameraných na reálne rozprávanie.
                     </p>
 
-                    <div class="pt-2 flex flex-col sm:flex-row sm:items-center gap-4">
-                        <button onclick="startQuizFlow()" class="bg-terracotta hover:bg-terracottaHover text-white font-semibold text-base sm:text-lg px-7 py-4 rounded-2xl shadow-lg shadow-terracotta/25 hover:shadow-xl hover:-translate-y-0.5 transition flex items-center justify-center gap-3 group">
+                    <!-- Jediné hlavné tlačidlo na spustenie diagnostiky -->
+                    <div class="pt-2">
+                        <button onclick="startQuizFlow()" class="w-full sm:w-auto bg-terracotta hover:bg-terracottaHover text-white font-semibold text-base sm:text-lg px-8 py-4 rounded-2xl shadow-lg shadow-terracotta/25 hover:shadow-xl hover:-translate-y-0.5 transition flex items-center justify-center gap-3 group">
+                            <i data-lucide="sparkles" class="w-5 h-5 text-amber-200"></i>
                             <span>Zisti svoju úroveň (Test zdarma)</span>
                             <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition"></i>
                         </button>
-                        <a href="#kurzy" class="px-6 py-4 rounded-2xl border border-stone-300 hover:border-stone-400 bg-white/70 text-indigo-950 font-semibold text-base text-center transition">
-                            Pozrieť kurzy
-                        </a>
                     </div>
 
                     <div class="pt-2 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs sm:text-sm text-stone-500">
@@ -186,7 +177,7 @@
                     </div>
                 </div>
 
-                <!-- Right Column: Interactive Preview Card -->
+                <!-- Right Column: Čistá vizuálna ukážka výsledku (bez duplicitného tlačidla) -->
                 <div class="lg:col-span-5">
                     <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-indigo-950/5 border border-stone-200/90 relative">
                         <div class="absolute -top-3.5 right-6 bg-amber-400 text-indigo-950 text-xs font-bold px-3 py-1 rounded-full shadow-sm uppercase tracking-wider">
@@ -255,11 +246,6 @@
                                 </p>
                             </div>
                         </div>
-
-                        <button onclick="startQuizFlow()" class="mt-6 w-full py-3 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-950 font-semibold text-sm transition flex items-center justify-center gap-2">
-                            <span>Vyskúšať si test na vlastnej koži</span>
-                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                        </button>
                     </div>
                 </div>
 
@@ -322,26 +308,20 @@
             </div>
         </section>
 
-        <!-- SECTION: KURZY A LEKCIE (MAIN OFFER) -->
+        <!-- SECTION: KURZY A LEKCIE (MAIN OFFER - bez duplicitného tlačidla na test) -->
         <section id="kurzy" class="py-16 sm:py-24 px-4 sm:px-6">
             <div class="max-w-6xl mx-auto">
-                <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-                    <div>
-                        <span class="text-xs font-bold uppercase tracking-widest text-terracotta">Aktuálna ponuka</span>
-                        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-indigo-950 mt-2">
-                            Kurzy a lekcie Slow Slovak
-                        </h2>
-                        <p class="text-stone-600 mt-2 max-w-xl">
-                            Živé online stretnutia cez Zoom v malých skupinách + prehľadné PDF materiály, cvičenia a záznamy z hodín.
-                        </p>
-                        <p class="lang-ua text-xs sm:text-sm text-indigo-800 mt-1">Живі уроки в Zoom у міні-групах + робочі зошити PDF та записи уроків.</p>
-                        <p class="lang-ru text-xs sm:text-sm text-indigo-800 mt-1">Живые уроки в Zoom в мини-группах + рабочие тетради PDF и записи уроков.</p>
-                        <p class="lang-en text-xs sm:text-sm text-indigo-800 mt-1">Live Zoom sessions in small groups + clear PDF worksheets and recordings.</p>
-                    </div>
-                    <button onclick="startQuizFlow()" class="self-start md:self-auto text-sm font-semibold text-terracotta hover:text-terracottaHover flex items-center gap-1.5 bg-amber-50 px-4 py-2.5 rounded-xl border border-amber-200">
-                        <i data-lucide="help-circle" class="w-4 h-4"></i>
-                        <span>Nevieš, ktorý si vybrať? Sprav si test</span>
-                    </button>
+                <div class="mb-12">
+                    <span class="text-xs font-bold uppercase tracking-widest text-terracotta">Aktuálna ponuka</span>
+                    <h2 class="font-serif text-3xl sm:text-4xl font-bold text-indigo-950 mt-2">
+                        Kurzy a lekcie Slow Slovak
+                    </h2>
+                    <p class="text-stone-600 mt-2 max-w-xl">
+                        Živé online stretnutia cez Zoom v malých skupinách + prehľadné PDF materiály, cvičenia a záznamy z hodín.
+                    </p>
+                    <p class="lang-ua text-xs sm:text-sm text-indigo-800 mt-1">Живі уроки в Zoom у міні-групах + робочі зошити PDF та записи уроків.</p>
+                    <p class="lang-ru text-xs sm:text-sm text-indigo-800 mt-1">Живые уроки в Zoom в мини-группах + рабочие тетради PDF и записи уроков.</p>
+                    <p class="lang-en text-xs sm:text-sm text-indigo-800 mt-1">Live Zoom sessions in small groups + clear PDF worksheets and recordings.</p>
                 </div>
 
                 <!-- 3 Course Cards -->
@@ -799,31 +779,133 @@
         </div>
     </section>
 
-    <!-- PLATOBNÝ MODAL (zatváraný krížikom v rohu) -->
-    <div id="checkout-modal" onclick="if(event.target === this) closeCheckout()" class="hidden fixed inset-0 bg-indigo-950/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-        <div class="bg-white p-8 rounded-3xl max-w-md w-full shadow-2xl relative">
-            <div class="flex items-center justify-between mb-4">
-                <h3 id="modal-title" class="font-serif text-2xl font-bold text-indigo-950">Zápis do kurzu</h3>
-                <button onclick="closeCheckout()" title="Zavrieť" aria-label="Zavrieť" class="w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-500 hover:text-indigo-950 transition">
+    <!-- ========================================== -->
+    <!-- COURSE DETAIL & CHECKOUT MODAL (FULL)      -->
+    <!-- (Zatváranie výhradne krížikom v rohu)      -->
+    <!-- ========================================== -->
+    <div id="checkout-modal" onclick="if(event.target === this) closeCourseModal()" class="fixed inset-0 z-50 hidden bg-indigo-950/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-stone-200 overflow-hidden my-8 relative">
+            
+            <!-- Modal Header s krížikom v pravom hornom rohu -->
+            <div class="bg-warmgray px-6 sm:px-8 py-5 border-b border-stone-200 flex items-center justify-between">
+                <div>
+                    <span id="modal-course-badge" class="text-xs font-bold uppercase tracking-wider text-terracotta">Zápis do kurzu</span>
+                    <h3 id="modal-course-title" class="font-serif text-xl sm:text-2xl font-bold text-indigo-950">Záhada menom SA a SI</h3>
+                </div>
+                <button onclick="closeCourseModal()" title="Zavrieť" aria-label="Zavrieť" class="w-10 h-10 rounded-full bg-white hover:bg-stone-200/80 flex items-center justify-center text-stone-500 hover:text-indigo-950 transition shadow-sm">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
-            <div id="checkout-form-box">
-                <input type="text" id="cust-name" placeholder="Tvoje meno" class="w-full border border-stone-300 p-3 rounded-xl mb-3 focus:outline-none focus:border-indigo-950">
-                <input type="email" id="cust-email" placeholder="Tvoj e-mail" class="w-full border border-stone-300 p-3 rounded-xl mb-4 focus:outline-none focus:border-indigo-950">
-                <button onclick="completeOrder()" class="w-full bg-terracotta hover:bg-terracottaHover text-white py-3.5 rounded-xl font-bold transition">Zaplatiť kartou</button>
+
+            <!-- STEP A: CHECKOUT FORM -->
+            <div id="modal-step-checkout" class="p-6 sm:p-8 space-y-6">
+                <p id="modal-course-desc" class="text-sm text-stone-600 leading-relaxed"></p>
+
+                <!-- Package Selection -->
+                <div id="modal-packages-wrapper" class="space-y-3">
+                    <label class="text-xs font-bold uppercase tracking-wider text-stone-500 block">1. Vyber si variant kurzu:</label>
+                    <div id="modal-packages-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                </div>
+
+                <!-- Student Details Form -->
+                <form onsubmit="processSimulatedPayment(event)" class="space-y-4 pt-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-stone-500 block">2. Kam ti pošleme materiály a link na Zoom?</label>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-medium text-stone-700 block mb-1">Meno a priezvisko</label>
+                            <input type="text" id="checkout-name" required placeholder="Napr. Olena Kovalenko" class="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:border-indigo-950">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-stone-700 block mb-1">E-mailová adresa</label>
+                            <input type="email" id="checkout-email" required placeholder="tvoj@email.com" class="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:border-indigo-950">
+                        </div>
+                    </div>
+
+                    <!-- Simulated Card / Stripe Box -->
+                    <div class="bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-stone-700 flex items-center gap-1.5">
+                                <i data-lucide="lock" class="w-3.5 h-3.5 text-emerald-600"></i>
+                                Bezpečná platba kartou (Stripe / Apple Pay / Google Pay)
+                            </span>
+                            <span class="text-xs font-bold text-indigo-950 bg-white px-2 py-0.5 rounded border border-stone-200">STRIPE</span>
+                        </div>
+                        <p class="text-xs text-stone-500">
+                            Po kliknutí na tlačidlo nižšie prebehne platba a ihneď získaš prístup k PDF pracovným listom a rozvrhu Zoom hodín.
+                        </p>
+                    </div>
+
+                    <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div>
+                            <span class="text-xs text-stone-400 block">Celkom na úhradu:</span>
+                            <span id="checkout-final-price" class="font-serif text-2xl font-bold text-indigo-950">99 €</span>
+                        </div>
+
+                        <button type="submit" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-terracotta hover:bg-terracottaHover text-white font-bold text-sm shadow-lg shadow-terracotta/25 transition flex items-center justify-center gap-2">
+                            <i data-lucide="credit-card" class="w-4 h-4"></i>
+                            <span id="checkout-submit-text">Zaplatiť kartou a vstúpiť do kurzu</span>
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div id="checkout-success-box" class="hidden text-center">
-                <p class="text-emerald-700 font-bold text-lg mb-2">✓ Platba prebehla úspešne!</p>
-                <p class="text-sm text-stone-600 mb-4">Tvoj Zoom link na živý kurz: <br><strong class="text-indigo-950">zoom.us/j/slow-slovak-live</strong></p>
-                <button onclick="downloadMaterial()" class="w-full bg-indigo-950 hover:bg-indigo-900 text-white py-3 rounded-xl font-bold transition">📥 Stiahnuť študijný ťahák</button>
+
+            <!-- STEP B: POST-PAYMENT CONFIRMATION (Zatvára sa krížikom v rohu) -->
+            <div id="modal-step-success" class="hidden p-6 sm:p-8 space-y-6 text-center">
+                <div class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
+                    <i data-lucide="party-popper" class="w-8 h-8"></i>
+                </div>
+
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-widest text-emerald-700">Platba prebehla úspešne!</span>
+                    <h4 class="font-serif text-2xl sm:text-3xl font-bold text-indigo-950 mt-1">
+                        Vitaj v Slow Slovak, <span id="success-student-name">študent</span>!
+                    </h4>
+                    <p class="text-sm text-stone-600 mt-2 max-w-md mx-auto">
+                        Potvrdenie a faktúru sme poslali na <strong id="success-student-email"></strong>. Tu sú tvoje materiály a prístup k lekciám:
+                    </p>
+                </div>
+
+                <!-- Instant Access Materials & Zoom Box -->
+                <div class="bg-warmgray/70 rounded-2xl p-5 border border-stone-200 text-left space-y-4">
+                    <div class="flex items-start gap-3.5 bg-white p-4 rounded-xl border border-stone-200/80">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-950 flex items-center justify-center shrink-0">
+                            <i data-lucide="video" class="w-5 h-5"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <span class="text-xs font-bold text-indigo-600 uppercase">Krok 1: Živé lekcie cez Zoom</span>
+                            <h5 class="font-bold text-sm text-indigo-950">Pripojenie do tvojej skupiny</h5>
+                            <p class="text-xs text-stone-500 mt-0.5">Najbližšia hodina začína v utorok o 18:00. Link je aktívny pre všetky stretnutia.</p>
+                            <a href="#zoom-link-demo" onclick="return false;" class="inline-flex items-center gap-1 text-xs font-bold text-terracotta hover:underline mt-2">
+                                <span>Otvoriť Zoom miestnosť / Pridať do kalendára</span>
+                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3.5 bg-white p-4 rounded-xl border border-stone-200/80">
+                        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center shrink-0">
+                            <i data-lucide="file-text" class="w-5 h-5"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <span class="text-xs font-bold text-amber-700 uppercase">Krok 2: Študijné materiály (PDF)</span>
+                            <h5 class="font-bold text-sm text-indigo-950">Pracovný zošit + Prehľadové tabuľky</h5>
+                            <p class="text-xs text-stone-500 mt-0.5">Stiahni si materiály pred prvou hodinou, budeme s nimi pracovať.</p>
+                            <button onclick="downloadSampleMaterial()" class="inline-flex items-center gap-1 text-xs font-bold text-indigo-950 hover:text-terracotta mt-2">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                <span>Stiahnuť študijný balíček (.TXT / .PDF ukážka)</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
 
-    <!-- FOOTER (Bez návodu pre majiteľku) -->
-    <footer class="bg-white border-t border-stone-200/80 py-10 px-4 sm:px-6 mt-auto">
-        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-500">
+    <!-- FOOTER (Čistý, vycentrovaný, bez duplicitných odkazov) -->
+    <footer class="bg-white border-t border-stone-200/80 py-8 px-4 sm:px-6 mt-auto">
+        <div class="max-w-6xl mx-auto flex items-center justify-center text-xs text-stone-500">
             <div class="flex items-center gap-2">
                 <span class="font-serif font-bold text-indigo-950 text-sm">Slow Slovak</span>
                 <span>• Slovenčina zrozumiteľne a bez stresu © 2026</span>
