@@ -643,9 +643,8 @@ function processSimulatedPayment(event) {
     // Uložíme údaje študenta do prehliadača pred presmerovaním na Stripe
     localStorage.setItem('slowslovak_pending_order', JSON.stringify(orderPayload));
 
-    // Tvoje Stripe Payment Links (sem vložíš odkazy zo Stripe pre jednotlivé kurzy)
     const stripeLinks = {
-        "Záhada menom SA a SI": "https://buy.stripe.com/TVOJ_LINK_PRE_SASI",
+        "Záhada menom SA a SI": "https://buy.stripe.com/test_6oU14m5jy0v59Tz3NPgYU00",
         "Ťažké témy B1": "https://buy.stripe.com/TVOJ_LINK_PRE_B1",
         "Individuálna lekcia": "https://buy.stripe.com/TVOJ_LINK_PRE_INDIVIDUAL"
     };
@@ -668,7 +667,6 @@ window.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     
     // V Stripe pri tvorbe Payment Linku nastav Redirect URL na:
-    // https://artemts245.github.io/SlowSlovak/?payment=success
     if (urlParams.get('payment') === 'success') {
         completeOrder();
         // Vyčistíme URL, aby sa pri obnovení stránky akcia nespúšťala znova
