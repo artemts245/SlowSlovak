@@ -59,20 +59,6 @@ body.lang-en .lang-en {
 ::-webkit-scrollbar-thumb:hover {
     background: #94A3B8;
 }
-/* Perfektné ukotvenie hornej časti pre mobily bez prekrývania pri scrolovaní */
-@media (max-width: 768px) {
-    /* 1. Telo začína až pod celou fixnou hornou lištou, aby sa text pod ňu schovával */
-    body {
-        padding-top: 140px !important;
-    }
-
-    /* 2. Fixujeme celú hornú zónu na vrchu obrazovky, aby neputovala pri scrolovaní */
-    .top-bar-container, header {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        z-index: 1000 !important;
-        background-color: #FAF8F5 !important;
-    }
+html {
+    scroll-padding-top: 130px;
 }

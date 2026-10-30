@@ -49,90 +49,93 @@
 <body class="antialiased selection:bg-amber-200 selection:text-indigo-950 min-h-screen flex flex-col">
 
     <!-- TOP BILINGUAL HELPER BAR S ROZBAĽOVACÍM MENU (DROPDOWN) -->
-    <div class="bg-indigo-950 text-indigo-100 text-xs sm:text-sm py-2 px-4 border-b border-indigo-900 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
-            <div class="flex items-center gap-2">
-                <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span class="font-medium">Režim pomalej slovenčiny (Slow Slovak)</span>
-            </div>
-
-            <!-- Dropdown pre výber pomocného jazyka -->
-            <div class="relative ml-auto" id="lang-dropdown-wrapper">
+    <div id="top-chrome" class="sticky top-0 z-50">
+        <div class="bg-indigo-950 text-indigo-100 text-xs sm:text-sm py-2 px-4 border-b border-indigo-900">
+            <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
                 <div class="flex items-center gap-2">
-                    <span class="text-indigo-300 hidden sm:inline">Pomocný preklad na webe:</span>
-                    <button onclick="toggleLangDropdown()" id="lang-dropdown-trigger" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-900 hover:bg-indigo-800 border border-indigo-700 text-xs font-semibold text-white transition shadow-sm">
-                        <i data-lucide="globe" class="w-3.5 h-3.5 text-amber-400"></i>
-                        <span id="lang-current-label">🇸🇰 Iba SK</span>
-                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-indigo-300"></i>
-                    </button>
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="font-medium">Režim pomalej slovenčiny (Slow Slovak)</span>
                 </div>
 
-                <!-- Rozbaľovací zoznam jazykov -->
-                <div id="lang-dropdown-menu" class="hidden absolute right-0 mt-2 w-52 rounded-2xl bg-white text-indigo-950 shadow-xl border border-stone-200 py-1.5 z-50">
-                    <button onclick="setLangHelper('sk')" class="w-full px-3.5 py-2 text-left text-xs font-semibold hover:bg-amber-50 flex items-center justify-between transition">
-                        <span>🇸🇰 Iba slovenčina (SK)</span>
-                        <span id="lang-check-sk" class="text-terracotta font-bold">✓</span>
-                    </button>
-                    <button onclick="setLangHelper('ua')" class="w-full px-3.5 py-2 text-left text-xs font-semibold hover:bg-amber-50 flex items-center justify-between transition">
-                        <span>🇺🇦 + Ukrajinčina (UA)</span>
-                        <span id="lang-check-ua" class="text-terracotta font-bold opacity-0">✓</span>
-                    </button>
-                    <button onclick="setLangHelper('ru')" class="w-full px-3.5 py-2 text-left text-xs font-semibold hover:bg-amber-50 flex items-center justify-between transition">
-                        <span>🇷🇺 + Ruština (RU)</span>
-                        <span id="lang-check-ru" class="text-terracotta font-bold opacity-0">✓</span>
-                    </button>
-                    <button onclick="setLangHelper('en')" class="w-full px-3.5 py-2 text-left text-xs font-semibold hover:bg-amber-50 flex items-center justify-between transition">
-                        <span>🇬🇧 + Angličtina (EN)</span>
-                        <span id="lang-check-en" class="text-terracotta font-bold opacity-0">✓</span>
-                    </button>
+                <!-- Dropdown pre výber pomocného jazyka -->
+                <div class="relative ml-auto" id="lang-dropdown-wrapper">
+                    <div class="flex items-center gap-2">
+                        <span class="text-indigo-300 hidden sm:inline">Pomocný preklad na webe:</span>
+                        <button onclick="toggleLangDropdown()" id="lang-dropdown-trigger" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-900 hover:bg-indigo-800 border border-indigo-700 text-xs font-semibold text-white transition shadow-sm">
+                            <i data-lucide="globe" class="w-3.5 h-3.5 text-amber-400"></i>
+                            <span id="lang-current-label">🇸🇰 Iba SK</span>
+                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-indigo-300"></i>
+                        </button>
+                    </div>
+
+                    <!-- Rozbaľovací zoznam jazykov -->
+                    <div id="lang-dropdown-menu" class="hidden absolute right-0 mt-2 w-52 rounded-2xl bg-white text-indigo-950 shadow-xl border border-stone-200 py-1.5 z-50">
+                        <button onclick="setLangHelper('sk')" class="w-full px-3.5 py-2 text-left text-xs font-semibold hover:bg-amber-50 flex items-center justify-between transition">
+                            <span>🇸🇰 Iba slovenčina (SK)</span>
+                            <span id="lang-check-sk" class="text-terracotta font-bold">✓</span>
+                        </button>
+                        <button onclick="setLangHelper('ua')" class="w-full px-3.5 py-2 text-left text-xs font-semibold hover:bg-amber-50 flex items-center justify-between transition">
+                            <span>🇺🇦 + Ukrajinčina (UA)</span>
+                            <span id="lang-check-ua" class="text-terracotta font-bold opacity-0">✓</span>
+                        </button>
+                        <button onclick="setLangHelper('ru')" class="w-full px-3.5 py-2 text-left text-xs font-semibold hover:bg-amber-50 flex items-center justify-between transition">
+                            <span>🇷🇺 + Ruština (RU)</span>
+                            <span id="lang-check-ru" class="text-terracotta font-bold opacity-0">✓</span>
+                        </button>
+                        <button onclick="setLangHelper('en')" class="w-full px-3.5 py-2 text-left text-xs font-semibold hover:bg-amber-50 flex items-center justify-between transition">
+                            <span>🇬🇧 + Angličtina (EN)</span>
+                            <span id="lang-check-en" class="text-terracotta font-bold opacity-0">✓</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- MAIN NAVIGATION (Čistá hlavička bez duplicitného CTA tlačidla) -->
-    <header class="bg-cream/90 backdrop-blur-md border-b border-stone-200/80 sticky top-[46px] sm:top-[50px] z-40">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
-            <!-- Brand Logo -->
-            <a href="#" onclick="showView('home'); return false;" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-xl bg-terracotta text-white flex items-center justify-center font-serif font-bold text-xl shadow-sm group-hover:scale-105 transition">
-                    S
-                </div>
-                <div>
-                    <span class="font-serif font-bold text-xl sm:text-2xl tracking-tight text-indigo-950 block leading-none">Slow Slovak</span>
-                    <span class="text-xs text-stone-500 font-medium block mt-0.5">Slovenčina bez stresu</span>
-                </div>
-            </a>
+        <!-- MAIN NAVIGATION (Čistá hlavička bez duplicitného CTA tlačidla) -->
+        <header class="bg-cream/90 backdrop-blur-md border-b border-stone-200/80">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+                <!-- Brand Logo -->
+                <a href="#" onclick="showView('home'); return false;" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-terracotta text-white flex items-center justify-center font-serif font-bold text-xl shadow-sm group-hover:scale-105 transition">
+                        S
+                    </div>
+                    <div>
+                        <span class="font-serif font-bold text-xl sm:text-2xl tracking-tight text-indigo-950 block leading-none">Slow Slovak</span>
+                        <span class="text-xs text-stone-500 font-medium block mt-0.5">Slovenčina bez stresu</span>
+                    </div>
+                </a>
 
-            <!-- Nav Links -->
-            <nav class="flex items-center gap-5 sm:gap-8 text-xs sm:text-sm font-medium text-stone-700">
-                <a href="#ako-to-funguje" onclick="showView('home')" class="hover:text-terracotta transition">
-                    Ako to funguje
-                    <span class="lang-ua text-[11px] text-stone-400 font-normal">Як це працює</span>
-                    <span class="lang-ru text-[11px] text-stone-400 font-normal">Как это работает</span>
-                    <span class="lang-en text-[11px] text-stone-400 font-normal">How it works</span>
-                </a>
-                <a href="#kurzy" onclick="showView('home')" class="hover:text-terracotta transition">
-                    Kurzy a lekcie
-                    <span class="lang-ua text-[11px] text-stone-400 font-normal">Курси та уроки</span>
-                    <span class="lang-ru text-[11px] text-stone-400 font-normal">Курсы и уроки</span>
-                    <span class="lang-en text-[11px] text-stone-400 font-normal">Courses & Lessons</span>
-                </a>
-                <a href="#o-mne" onclick="showView('home')" class="hover:text-terracotta transition">
-                    O projekte
-                    <span class="lang-ua text-[11px] text-stone-400 font-normal">Про проєкт</span>
-                    <span class="lang-ru text-[11px] text-stone-400 font-normal">О проекте</span>
-                    <span class="lang-en text-[11px] text-stone-400 font-normal">About</span>
-                </a>
-                <a href="#faq" onclick="showView('home')" class="hidden sm:block hover:text-terracotta transition">
-                    Časté otázky
-                    <span class="lang-ua text-[11px] text-stone-400 font-normal">Часті питання</span>
-                    <span class="lang-ru text-[11px] text-stone-400 font-normal">Частые вопросы</span>
-                    <span class="lang-en text-[11px] text-stone-400 font-normal">FAQ</span>
-                </a>
-            </nav>
-        </div>
+                <!-- Nav Links -->
+                <nav class="flex items-center gap-5 sm:gap-8 text-xs sm:text-sm font-medium text-stone-700">
+                    <a href="#ako-to-funguje" onclick="showView('home')" class="hover:text-terracotta transition">
+                        Ako to funguje
+                        <span class="lang-ua text-[11px] text-stone-400 font-normal">Як це працює</span>
+                        <span class="lang-ru text-[11px] text-stone-400 font-normal">Как это работает</span>
+                        <span class="lang-en text-[11px] text-stone-400 font-normal">How it works</span>
+                    </a>
+                    <a href="#kurzy" onclick="showView('home')" class="hover:text-terracotta transition">
+                        Kurzy a lekcie
+                        <span class="lang-ua text-[11px] text-stone-400 font-normal">Курси та уроки</span>
+                        <span class="lang-ru text-[11px] text-stone-400 font-normal">Курсы и уроки</span>
+                        <span class="lang-en text-[11px] text-stone-400 font-normal">Courses & Lessons</span>
+                    </a>
+                    <a href="#o-mne" onclick="showView('home')" class="hover:text-terracotta transition">
+                        O projekte
+                        <span class="lang-ua text-[11px] text-stone-400 font-normal">Про проєкт</span>
+                        <span class="lang-ru text-[11px] text-stone-400 font-normal">О проекте</span>
+                        <span class="lang-en text-[11px] text-stone-400 font-normal">About</span>
+                    </a>
+                    <a href="#faq" onclick="showView('home')" class="hidden sm:block hover:text-terracotta transition">
+                        Časté otázky
+                        <span class="lang-ua text-[11px] text-stone-400 font-normal">Часті питання</span>
+                        <span class="lang-ru text-[11px] text-stone-400 font-normal">Частые вопросы</span>
+                        <span class="lang-en text-[11px] text-stone-400 font-normal">FAQ</span>
+                    </a>
+                </nav>
+            </div>
+        </header>
     </header>
+</div>
 
     <!-- ========================================== -->
     <!-- VIEW 1: LANDING PAGE (HOME)                -->
