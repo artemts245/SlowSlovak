@@ -59,23 +59,20 @@ body.lang-en .lang-en {
 ::-webkit-scrollbar-thumb:hover {
     background: #94A3B8;
 }
-/* Úprava pre mobilnú verziu – odstránenie medzery nad modrým pruhom */
+/* Perfektné ukotvenie hornej časti pre mobily bez prekrývania pri scrolovaní */
 @media (max-width: 768px) {
+    /* 1. Telo začína až pod celou fixnou hornou lištou, aby sa text pod ňu schovával */
     body {
-        padding-top: 0 !important; /* Zrušíme nežiaducu medzeru úplne hore */
+        padding-top: 140px !important;
     }
-    
-    /* Ak je modrý pruh pevne uchytený, dáme mu priestor pod ním, aby nezasahoval do hlavičky */
-    /* Predpokladajme, že modrý pruh má nejakú triedu alebo ID, prípadne ho odsadíme priamo cez header: */
-    header {
-        margin-top: 10px;
-    }
-}
-@media (max-width: 768px) {
-    header {
-        height: auto !important;
-        min-height: 85px !important;
-        padding-bottom: 12px !important;
-        padding-top: 12px !important;
+
+    /* 2. Fixujeme celú hornú zónu na vrchu obrazovky, aby neputovala pri scrolovaní */
+    .top-bar-container, header {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 1000 !important;
+        background-color: #FAF8F5 !important;
     }
 }
