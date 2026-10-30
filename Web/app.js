@@ -1,5 +1,5 @@
 // KĽÚČE PRE LOCALSTORAGE
-const STORAGE_KEY_QUIZ = 'slow_slovak_quiz_state_v1';
+const STORAGE_KEY_QUIZ = 'slow_slovak_quiz_state_v2';
 const STORAGE_KEY_LANG = 'slow_slovak_lang_v1';
 
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxholH20ZYkR4gmYdx1Uszc2uJLwi4dBGyPGk6u1kpY9k0PNcgpaGwEHME0UPWJByGh/exec';
@@ -9,25 +9,22 @@ let activeQuestions = [];
 let currentQuestionIndex = 0;
 let userAnswers = [];
 let quizLengthMode = 30;
-let selectedCourseKey = 'sasi';
-let selectedPackagePrice = 99;
-let selectedPackageId = 'basic';
+let selectedCourseKey = 'prvapomoc';
+let selectedPackagePrice = 29;
+let selectedPackageId = 'minikurz';
 let selectedPackageName = '';
 
 // INICIALIZÁCIA PO NAČÍTANÍ STRÁNKY
 document.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) lucide.createIcons();
 
-    // Obnovenie naposledy zvoleného pomocného jazyka z localStorage
     const savedLang = localStorage.getItem(STORAGE_KEY_LANG);
     if (savedLang) {
         setLangHelper(savedLang);
     }
 
-    // Kontrola, či existuje rozpracovaný test v localStorage
     updateHeroCtaIfSavedProgress();
 
-    // Zatvorenie jazykového dropdownu pri kliknutí mimo neho
     document.addEventListener('click', (e) => {
         const wrapper = document.getElementById('lang-dropdown-wrapper');
         const menu = document.getElementById('lang-dropdown-menu');
@@ -36,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Zatvorenie platobného modalu klávesom Escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             closeCourseModal();
@@ -84,7 +80,6 @@ function setLangHelper(lang) {
     if (menu) menu.classList.add('hidden');
 }
 
-// Prepínanie hlavných pohľadov (Domov / Kvíz / Výsledky)
 function showView(viewName) {
     ['home', 'quiz', 'results'].forEach(v => {
         const el = document.getElementById('view-' + v);
@@ -137,7 +132,6 @@ function handleWaitlistSubmit(e) {
 
     if (!email) return;
 
-    // Odoslanie požiadavky do Google Apps Scriptu s typom 'waitlist'
     fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
@@ -167,9 +161,7 @@ function saveQuizProgress() {
             }))
         };
         localStorage.setItem(STORAGE_KEY_QUIZ, JSON.stringify(state));
-    } catch (e) {
-        // Ignorujeme, ak je localStorage nedostupný
-    }
+    } catch (e) {}
 }
 
 function clearQuizProgress() {
@@ -205,7 +197,7 @@ function updateHeroCtaIfSavedProgress() {
 // ==========================================
 function buildActiveQuestionsList(mode) {
     if (mode === 10) {
-        const cats = ['sasi', 'sklonovanie', 'slovesa', 'predlozky', 'b1vazby'];
+        const cats = ['sasi', 'pady', 'slovesa', 'predlozky', 'slovna_zasoba'];
         const list = [];
         cats.forEach(c => {
             const catQs = ALL_QUESTIONS.filter(q => q.cat === c).slice(0, 2);
@@ -242,7 +234,6 @@ function setQuizLengthMode(count) {
 }
 
 function startQuizFlow() {
-    // Skúsime načítať rozpracovaný test z localStorage
     try {
         const raw = localStorage.getItem(STORAGE_KEY_QUIZ);
         if (raw) {
@@ -273,7 +264,6 @@ function startQuizFlow() {
         }
     } catch (e) {}
 
-    // Ak nič nie je uložené, spustíme nový test
     updateModeButtonsUI(quizLengthMode);
     activeQuestions = buildActiveQuestionsList(quizLengthMode);
     currentQuestionIndex = 0;
@@ -310,7 +300,6 @@ function renderCurrentQuestion() {
     document.getElementById('quiz-question-text').textContent = qObj.q;
     document.getElementById('quiz-question-hint').textContent = '💡 Kontekst: ' + qObj.hint;
 
-    // Zobrazenie / skrytie tlačidla "Predchádzajúca otázka"
     const prevBtn = document.getElementById('quiz-prev-btn');
     if (prevBtn) {
         if (currentQuestionIndex > 0) prevBtn.classList.remove('hidden');
@@ -380,11 +369,11 @@ function calculateAndShowResults() {
     const overallPct = Math.round((totalCorrect / totalQs) * 100);
 
     const categoryMeta = [
-        { key: 'slovesa', label: 'Slovesá a časy' },
-        { key: 'predlozky', label: 'Predložky (do/na, pre/za...)' },
-        { key: 'sklonovanie', label: 'Skloňovanie (pády a koncovky)' },
         { key: 'sasi', label: 'Zvratné slovesá SA / SI a slovosled' },
-        { key: 'b1vazby', label: 'B1 Väzby a podmienky (keby, aby...)' }
+        { key: 'pady', label: 'Skloňovanie a pády' },
+        { key: 'slovesa', label: 'Slovesá a slovesné väzby' },
+        { key: 'predlozky', label: 'Predložky (na, o, od...)' },
+        { key: 'slovna_zasoba', label: 'Slovná zásoba a chytáky' }
     ];
 
     const catStats = categoryMeta.map(cm => {
@@ -404,10 +393,10 @@ function calculateAndShowResults() {
     const secondWeakest = sortedByWeakest[1];
 
     let levelLabel = 'A2 (Mierne pokročilý)';
-    if (overallPct < 42) {
+    if (overallPct < 45) {
         levelLabel = 'A1 / A2- (Začiatočník)';
-    } else if (overallPct >= 78) {
-        levelLabel = 'B1 (Stredne pokročilý)';
+    } else if (overallPct >= 80) {
+        levelLabel = 'A2+ / B1 (Pokročilý)';
     }
 
     document.getElementById('res-level-title').textContent = levelLabel;
@@ -415,10 +404,10 @@ function calculateAndShowResults() {
     document.getElementById('res-total-points').textContent = `${totalCorrect} / ${totalQs} správne`;
 
     const diagEl = document.getElementById('res-summary-diagnosis');
-    if (overallPct >= 85) {
-        diagEl.innerHTML = `Skvelá práca! Tvoja slovenčina je na veľmi dobrej úrovni. Najviac bodov si stratil/a v téme <strong>${weakestCat.label.toLowerCase()}</strong> (${weakestCat.pct} %).`;
+    if (overallPct >= 80) {
+        diagEl.innerHTML = `Skvelá práca! Tvoja slovenčina je na výbornej úrovni (${overallPct} %). Máš pevný základ a môžeš sa posunúť na <strong>Simulátor skúšky A2</strong> alebo do <strong>skupinových kurzov</strong>.`;
     } else {
-        diagEl.innerHTML = `Tvoj výsledok zodpovedá úrovni <strong>${levelLabel}</strong>, ale najväčší problém ti momentálne robí <strong>${weakestCat.label.toLowerCase()} (${weakestCat.pct} %)</strong> a <strong>${secondWeakest.label.toLowerCase()} (${secondWeakest.pct} %)</strong>.`;
+        diagEl.innerHTML = `Tieto chyby robí až 90 % študentov! Najväčší priestor na zlepšenie máš v téme <strong>${weakestCat.label.toLowerCase()} (${weakestCat.pct} %)</strong> a <strong>${secondWeakest.label.toLowerCase()} (${secondWeakest.pct} %)</strong>.`;
     }
 
     const barsContainer = document.getElementById('res-categories-bars');
@@ -465,29 +454,15 @@ function calculateAndShowResults() {
         barsContainer.appendChild(item);
     });
 
-    let recCourseId = 'sasi';
+    let recCourseId = 'prvapomoc';
     let customRecHeadline = '';
 
-    if (weakestCat.key === 'sasi') {
-        recCourseId = 'sasi';
-        customRecHeadline = `Najväčší problém máš so SA/SI (${weakestCat.pct} %) → pozri si kurz „Záhada menom SA a SI“`;
-    } else if (weakestCat.key === 'b1vazby' || weakestCat.key === 'slovesa' || weakestCat.key === 'predlozky') {
-        if (overallPct < 45 && catStats.find(c => c.key === 'sasi').pct <= 50) {
-            recCourseId = 'sasi';
-            customRecHeadline = `Najprv si urob poriadok v základoch a SA/SI → odporúčame kurz „Záhada menom SA a SI“`;
-        } else {
-            recCourseId = 'b1';
-            customRecHeadline = `Najviac ťa brzdia ${weakestCat.label.toLowerCase()} (${weakestCat.pct} %) → pozri si kurz „Ťažké témy B1“`;
-        }
-    } else if (weakestCat.key === 'sklonovanie') {
-        const sasiScore = catStats.find(c => c.key === 'sasi').pct;
-        if (sasiScore <= 67) {
-            recCourseId = 'sasi';
-            customRecHeadline = `Skloňovanie aj SA/SI ti robia starosti → začni kurzom „Záhada menom SA a SI“`;
-        } else {
-            recCourseId = 'b1';
-            customRecHeadline = `Tvojou slabinou sú pády a väzby (${weakestCat.pct} %) → trénuj ich v kurze „Ťažké témy B1“`;
-        }
+    if (overallPct < 80) {
+        recCourseId = 'prvapomoc';
+        customRecHeadline = `Tieto chyby robí 90 % študentov (najmä ${weakestCat.label.toLowerCase()}) → získaj minikurz „Slovenská prvá pomoc“`;
+    } else {
+        recCourseId = 'b1';
+        customRecHeadline = `Skvelý výsledok (${overallPct} %)! Tvoja slovenčina je výborná → vyskúšaj Simulátor A2 alebo skupinové kurzy`;
     }
 
     const recCourse = COURSES_DATA[recCourseId];
@@ -495,7 +470,7 @@ function calculateAndShowResults() {
     document.getElementById('rec-course-desc').textContent = recCourse.desc;
     document.getElementById('rec-card-title').textContent = recCourse.title;
     document.getElementById('rec-card-price').textContent = recCourse.packages[0].price + ' €';
-    document.getElementById('rec-card-subprice').textContent = recCourse.packages.length > 1 ? `/ ${recCourse.packages[1].price} € PLUS` : '/ kompletný kurz';
+    document.getElementById('rec-card-subprice').textContent = recCourse.packages.length > 1 ? `/ alebo ${recCourse.packages[1].price} € A2 Simulátor` : '/ vrátane PDF rozboru chýb';
     document.getElementById('rec-card-btn').setAttribute('onclick', `openCourseModal('${recCourseId}')`);
 
     const bulletsEl = document.getElementById('rec-course-bullets');
@@ -550,8 +525,8 @@ function toggleMistakesReview() {
 // 6. CHECKOUT MODAL A SŤAHOVANIE MATERIÁLOV
 // ==========================================
 function openCourseModal(courseKey) {
-    const normalizedKey = courseKey === 'indiv' ? 'individual' : courseKey;
-    selectedCourseKey = COURSES_DATA[normalizedKey] ? normalizedKey : 'sasi';
+    const normalizedKey = (courseKey === 'indiv' || courseKey === 'individual') ? 'prvapomoc' : courseKey;
+    selectedCourseKey = COURSES_DATA[normalizedKey] ? normalizedKey : 'prvapomoc';
     const course = COURSES_DATA[selectedCourseKey];
 
     document.getElementById('modal-course-badge').textContent = course.badge;
@@ -640,22 +615,19 @@ function processSimulatedPayment(event) {
         price: price
     };
 
-    // Uložíme údaje študenta do prehliadača pred presmerovaním na Stripe
     localStorage.setItem('slowslovak_pending_order', JSON.stringify(orderPayload));
 
     const stripeLinks = {
+        "Slovenská prvá pomoc (Minikurz)": "https://buy.stripe.com/TVOJ_LINK_ZA_29_EUR",
         "Záhada menom SA a SI": "https://buy.stripe.com/test_6oU14m5jy0v59Tz3NPgYU00",
-        "Ťažké témy B1": "https://buy.stripe.com/TVOJ_LINK_PRE_B1",
-        "Individuálna lekcia": "https://buy.stripe.com/TVOJ_LINK_PRE_INDIVIDUAL"
+        "Ťažké témy B1 / Príprava A2+": "https://buy.stripe.com/TVOJ_LINK_PRE_B1_ALEBO_A2"
     };
 
     const targetStripeUrl = stripeLinks[courseTitle];
 
-    // Ak už máš vložený reálny Stripe link, presmeruje študenta na Stripe:
     if (targetStripeUrl && !targetStripeUrl.includes("TVOJ_LINK")) {
         window.location.href = `${targetStripeUrl}?prefilled_email=${encodeURIComponent(email)}`;
     } else {
-        // Testovací režim (kým nemáš vložený Stripe link, rovno ukáže úspešnú obrazovku a odošle e-mail):
         completeOrder();
     }
 }
@@ -665,11 +637,8 @@ function processSimulatedPayment(event) {
 // ==========================================
 window.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
-    
-    // V Stripe pri tvorbe Payment Linku nastav Redirect URL na:
     if (urlParams.get('payment') === 'success') {
         completeOrder();
-        // Vyčistíme URL, aby sa pri obnovení stránky akcia nespúšťala znova
         window.history.replaceState({}, document.title, window.location.pathname);
     }
 });
@@ -683,7 +652,6 @@ function completeOrder() {
     const studentEmail = (savedOrder.email || '').trim();
     const courseName = savedOrder.course || 'Kurz Slow Slovak';
 
-    // 1. Otvoríme študentovi priamo na webe okno s linkom na Zoom a PDF materiálmi
     const modal = document.getElementById('checkout-modal');
     const stepCheckout = document.getElementById('modal-step-checkout');
     const stepSuccess = document.getElementById('modal-step-success');
@@ -701,10 +669,9 @@ function completeOrder() {
 
     if (!studentEmail) return;
 
-    // 2. ODOŠLE UVÍTACÍ E-MAIL ŠTUDENTOVI (Cez tvoj Google Apps Script)
     fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors', // Dôležité pre Google Apps Script
+        mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({
             orderId: savedOrder.orderId || ('ORD-' + Date.now()),
@@ -718,7 +685,6 @@ function completeOrder() {
         })
     }).catch(err => console.error("Chyba pri odosielaní Google mailu:", err));
 
-    // 3. ODOŠLE NOTIFIKÁCIU TEBE (Cez Web3Forms)
     fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -728,32 +694,16 @@ function completeOrder() {
             from_name: "Slow Slovak Predaj",
             name: studentName,
             email: studentEmail,
-            message: `Skvelá správa!\n\nŠtudent ${studentName} (${studentEmail}) práve zaplatil za kurz: ${courseName}.\n\nSystém mu automaticky odoslal uvítací e-mail z tvojho Gmailu (môžeš si ho skontrolovať v Odoslanej pošte).`
+            message: `Skvelá správa!\n\nŠtudent ${studentName} (${studentEmail}) práve zaplatil za kurz: ${courseName}.`
         })
     }).catch(err => console.error("Chyba pri odosielaní Web3Forms:", err));
 
-    // Vymažeme čakajúcu objednávku z pamäte
     localStorage.removeItem('slowslovak_pending_order');
 }
 
 function downloadSampleMaterial() {
     const courseTitle = COURSES_DATA[selectedCourseKey].title;
-    const content = `SLOW SLOVAK - ŠTUDIJNÝ MATERIÁL
-Kurz: ${courseTitle}
-========================================
-
-Ďakujeme za prihlásenie! Tu je tvoj prehľad k prvej lekcii:
-
-1. Pravidlo druhého miesta vo vete (SA / SI):
-   V slovenčine dávame zvratné zámená SA a SI na druhé miesto vo vete.
-   Príklad: Včera SOM SA stretol s kamarátom.
-
-2. Rozdiel SA vs. SI:
-   - Umyť SA (celé telo) vs. Umyť SI ruky (konkrétny predmet)
-   - Kúpiť SI kávu (pre seba)
-
-Teším sa na teba na našom Zoom stretnutí!
-Slow Slovak`;
+    const content = `SLOW SLOVAK - ŠTUDIJNÝ MATERIÁL\nKurz: ${courseTitle}\n========================================\n\nĎakujeme za prihlásenie!`;
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -767,7 +717,6 @@ function downloadMaterial() {
     downloadSampleMaterial();
 }
 
-// Odoslanie formulára cez Web3Forms bez presmerovania stránky
 function handleWeb3FormsSubmit(event) {
     event.preventDefault();
     const form = event.target;

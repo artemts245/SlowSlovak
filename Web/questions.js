@@ -1,362 +1,368 @@
 // 1. PLNÁ DATABÁZA 30 DIAGNOSTICKÝCH OTÁZOK S KONTEXTOM (6 v každej z 5 kategórií)
 const ALL_QUESTIONS = [
-    // KATEGÓRIA 1: SA / SI (Zvratné slovesá a slovosled) - 6 otázok
+    // KATEGÓRIA 1: SA / SI A SLOVOSLED (6 otázok)
     {
         id: 1,
         cat: 'sasi',
-        catName: 'SA / SI (Zvratné slovesá)',
+        catName: 'SA / SI a slovosled',
         level: 'A1',
-        q: 'Ako ___ voláš? Volám ___ Martin.',
-        hint: 'Základné predstavenie sa',
-        options: ['sa / sa', 'si / sa', 'sa / si', 'si / si'],
-        correct: 0,
-        exp: 'Sloveso „volať sa“ je vždy so SA (Ako sa voláš? Volám sa...).'
+        q: 'Poď sem, _____!',
+        hint: 'Zvratné sloveso pri pohybe / zmene polohy tela',
+        options: ['sadni sa', 'sadni si', 'sadni'],
+        correct: 1,
+        exp: 'V slovenčine hovoríme „sadnúť si“ (so SI), na rozdiel od iných slovanských jazykov.'
     },
     {
         id: 2,
         cat: 'sasi',
-        catName: 'SA / SI (Zvratné slovesá)',
+        catName: 'SA / SI a slovosled',
         level: 'A2',
-        q: 'Idem do obchodu, lebo ___ chcem kúpiť novú bundu.',
-        hint: 'Kupujem niečo pre seba (iný predmet)',
-        options: ['sa', 'si', 'ma', 'mi'],
-        correct: 1,
-        exp: 'Keď kupujeme nejakú vec pre seba (kúpiť ČO? bundu), používame SI (kúpiť si bundu).'
+        q: 'Včera som _____.',
+        hint: 'Pravidlo 2. miesta vo vete – neopakujeme „sa“ dvakrát',
+        options: ['sa konečne naučil tieto slovíčka', 'konečne naučil sa tieto slovíčka', 'konečne naučil tieto slovíčka sa'],
+        correct: 0,
+        exp: 'Slovíčko „sa“ už stojí na druhom mieste vo vete („Včera som sa...“), preto ho pri slovese už neopakujeme.'
     },
     {
         id: 3,
         cat: 'sasi',
-        catName: 'SA / SI (Zvratné slovesá)',
+        catName: 'SA / SI a slovosled',
         level: 'A2',
-        q: 'Vyber vetu, ktorá má správny slovenský slovosled:',
-        hint: 'Pravidlo 2. miesta vo vete (príklonky)',
-        options: [
-            'Včera stretli sme sa v meste.',
-            'Včera sme sa stretli v meste.',
-            'Včera sa sme stretli v meste.',
-            'Stretli včera sme sa v meste.'
-        ],
-        correct: 1,
-        exp: 'Krátke slovíčka „sme“ a „sa“ stoja na 2. mieste vo vete v poradí: pomocné sloveso (sme) + zvratné zámeno (sa).'
+        q: 'Mám problém, môžeš mi, prosím ťa, _____ 10 eur?',
+        hint: 'Niekto požičiava peniaze mne (smer ku mne vs. odo mňa)',
+        options: ['požičať si', 'zapožičať', 'požičať'],
+        correct: 2,
+        exp: 'Keď žiadame niekoho, aby dal niečo nám, použijeme „požičať (mi)“. „Požičať si“ znamená vziať si niečo sám.'
     },
     {
         id: 4,
         cat: 'sasi',
-        catName: 'SA / SI (Zvratné slovesá)',
-        level: 'A2',
-        q: 'Každý večer ___ učím po slovensky aspoň dvadsať minút.',
-        hint: 'Študujem ja sám',
-        options: ['si', 'sa', '— (nič)', 'mi'],
+        catName: 'SA / SI a slovosled',
+        level: 'A1',
+        q: 'Zajtra nemôžem prísť, lebo _____ veľa práce.',
+        hint: 'Prirodzená slovenská väzba pre vlastníctvo / povinnosti',
+        options: ['u mňa je', 'mám', 'je u mňa'],
         correct: 1,
-        exp: '„Učiť sa“ (študovať sám) je so SA. „Učiť“ bez „sa“ znamená byť učiteľom a učiť niekoho iného.'
+        exp: 'V slovenčine nepoužívame väzbu „u mňa je“, ale vždy sloveso „mať“ → mám veľa práce.'
     },
     {
         id: 5,
         cat: 'sasi',
-        catName: 'SA / SI (Zvratné slovesá)',
+        catName: 'SA / SI a slovosled',
         level: 'B1',
-        q: 'Veľmi ___ mi páči táto nová kaviareň v centre.',
-        hint: 'Vyjadrenie, že niečo je pekné / príjemné',
-        options: ['si', 'sa', 'je', 'to'],
-        correct: 1,
-        exp: 'Väzba je „páčiť sa niekomu“ → Páči sa mi táto kaviareň.'
+        q: 'Cez víkend _____ ísť na výlet do hôr.',
+        hint: 'Slovosled v podmieňovacom spôsobe (pravidlo 2. miesta)',
+        options: ['chcel by som', 'ja by chcel', 'by som chcel'],
+        correct: 2,
+        exp: 'Príklonky „by som“ musia stáť na 2. pozícii vo vete hneď po prvom výraze („Cez víkend by som chcel...“).'
     },
     {
         id: 6,
         cat: 'sasi',
-        catName: 'SA / SI (Zvratné slovesá)',
-        level: 'B1',
-        q: 'Ráno ___ vždy umyjem ruky a potom ___ obliekam do práce.',
-        hint: 'Časť tela vs. celé telo',
-        options: ['sa / sa', 'si / sa', 'sa / si', 'si / si'],
+        catName: 'SA / SI a slovosled',
+        level: 'A2',
+        q: 'Môj syn _____ na univerzite v Košiciach.',
+        hint: 'Vysoká škola / univerzita vs. učiť sa doma',
+        options: ['sa učí', 'študuje', 'učí'],
         correct: 1,
-        exp: 'Umývam SI ruky (konkrétnu časť tela = umyť si čo), ale obliekam SA (celú osobu).'
+        exp: 'Na univerzite alebo vysokej škole „študujeme“. „Učiť sa“ používame skôr pre konkrétny predmet alebo učenie sa doma.'
     },
 
-    // KATEGÓRIA 2: SKLOŇOVANIE (Pády a koncovky) - 6 otázok
+    // KATEGÓRIA 2: SKLOŇOVANIE A PÁDY (6 otázok)
     {
         id: 7,
-        cat: 'sklonovanie',
+        cat: 'pady',
         catName: 'Skloňovanie (Pády)',
-        level: 'A1',
-        q: 'Ráno pijem čiernu ___ bez ___ .',
-        hint: 'Akuzatív (koho/čo) a Genitív (bez koho/čoho)',
-        options: ['kávu / mlieka', 'káva / mlieko', 'káve / mliekom', 'kávu / mlieko'],
+        level: 'A2',
+        q: 'Môj starší brat je ženatý _____.',
+        hint: 'S kým je ženatý? (Inštrumentál)',
+        options: ['so Slovenkou', 'na Slovenke', 'za Slovenku'],
         correct: 0,
-        exp: 'Pijem (čo? Akuzatív) → čiernu kávu. Bez (čoho? Genitív) → bez mlieka.'
+        exp: 'Muž je „ženatý s niekým“ (Inštrumentál) → so Slovenkou. Žena je „vydatá za niekoho“.'
     },
     {
         id: 8,
-        cat: 'sklonovanie',
+        cat: 'pady',
         catName: 'Skloňovanie (Pády)',
-        level: 'A2',
-        q: 'Cez víkend ideme na výlet s našimi dobrými ___ .',
-        hint: 'Inštrumentál množného čísla (s kým / čím)',
-        options: ['kamarátov', 'kamarátom', 'kamarátmi', 'kamaráti'],
+        level: 'A1',
+        q: 'Dnes nemôžem prísť do práce, _____.',
+        hint: 'Bolí koho/čo? (Akuzatív zámena ja)',
+        options: ['bolí mi hlava', 'u mňa bolí hlava', 'bolí ma hlava'],
         correct: 2,
-        exp: 'Predložka „s“ sa viaže s inštrumentálom. V množnom čísle má prídavné meno „-ými“ a podstatné meno „-mi“ (s dobrými kamarátmi).'
+        exp: 'Sloveso „bolieť“ sa v slovenčine viaže s Akuzatívom (koho/čo?) → bolí ma hlava, bolí ma zub.'
     },
     {
         id: 9,
-        cat: 'sklonovanie',
+        cat: 'pady',
         catName: 'Skloňovanie (Pády)',
         level: 'A2',
-        q: 'Bývam v ___ už tri roky.',
-        hint: 'Lokál (kde? v kom / v čom)',
-        options: ['Bratislavu', 'Bratislave', 'Bratislavou', 'Bratislavy'],
+        q: 'Moja mama už dlhé roky pracuje _____.',
+        hint: 'Povolanie v slovenčine (Nominatív s „ako“)',
+        options: ['lekárkou', 'ako lekárka', 'za lekárku'],
         correct: 1,
-        exp: 'Otázka KDE? (v kom/čom - Lokál) → v Bratislave.'
+        exp: 'Pri povolaniach nepoužívame samotný inštrumentál („pracuje lekárkou“), ale väzbu „pracuje ako lekárka“.'
     },
     {
         id: 10,
-        cat: 'sklonovanie',
+        cat: 'pady',
         catName: 'Skloňovanie (Pády)',
-        level: 'A2',
-        q: 'Dnes poobede musím zavolať svojmu ___ .',
-        hint: 'Datív (komu / čomu)',
-        options: ['lekára', 'lekárovi', 'lekárom', 'lekár'],
+        level: 'B1',
+        q: 'Cez víkend som bola vonku so svojimi _____.',
+        hint: 'Inštrumentál množného čísla slova „deti“',
+        options: ['deťami', 'deťmi', 'deťov'],
         correct: 1,
-        exp: 'Zavolať (komu? Datív) → životné podstatné mená mužského rodu majú v datíve koncovku -ovi (lekárovi).'
+        exp: 'Slovo „deti“ má v Inštrumentáli množného čísla nepravidelnú kratšiu koncovku -mi → s deťmi (s ľuďmi, s koňmi).'
     },
     {
         id: 11,
-        cat: 'sklonovanie',
+        cat: 'pady',
         catName: 'Skloňovanie (Pády)',
-        level: 'B1',
-        q: 'V tejto firme pracuje veľa zahraničných ___ .',
-        hint: 'Genitív množného čísla po slove „veľa“',
-        options: ['študenti', 'študentom', 'študentov', 'študentmi'],
-        correct: 2,
-        exp: 'Po slovách veľa, málo, niekoľko nasleduje Genitív množného čísla → veľa zahraničných študentov.'
+        level: 'A1',
+        q: 'Prepáčte, ja _____.',
+        hint: 'Rozumieť komu/čomu? (Datív)',
+        options: ['vás nerozumiem', 'vám nerozumiem', 'pre vás nerozumiem'],
+        correct: 1,
+        exp: 'Sloveso „rozumieť“ sa viaže s Datívom (komu/čomu?) → rozumiem ti, nerozumiem vám.'
     },
     {
         id: 12,
-        cat: 'sklonovanie',
+        cat: 'pady',
         catName: 'Skloňovanie (Pády)',
         level: 'B1',
-        q: 'Rozprávame sa o tej novej ___ , ktorú otvorili vedľa nás.',
-        hint: 'Lokál pre ženský rod zakončený na -ia',
-        options: ['reštaurácii', 'reštaurácie', 'reštauráciou', 'reštauráciu'],
-        correct: 0,
-        exp: 'Cudzie slová na -ia (reštaurácia, polícia, garancia) majú v Lokáli (o čom?) a Datíve príponu -ii (o reštaurácii).'
+        q: 'Na včerajšom koncerte bolo veľmi veľa _____.',
+        hint: 'Genitív množného čísla slova „ľudia“',
+        options: ['ľudej', 'človekov', 'ľudí'],
+        correct: 2,
+        exp: 'Množné číslo od „človek“ je „ľudia“ a po slove „veľa“ nasleduje Genitív → veľa ľudí.'
     },
 
-    // KATEGÓRIA 3: SLOVESÁ A ČASY (Časovanie, minulý čas, vid) - 6 otázok
+    // KATEGÓRIA 3: SLOVESÁ A SLOVESNÉ VÄZBY (6 otázok)
     {
         id: 13,
         cat: 'slovesa',
-        catName: 'Slovesá a časy',
+        catName: 'Slovesá a väzby',
         level: 'A1',
-        q: 'Oni ešte dobre ___ po slovensky, ale snažia sa.',
-        hint: 'Prítomný čas, 3. osoba množného čísla (oni)',
-        options: ['nerozumie', 'nerozumejú', 'nerozumia', 'nerozumiete'],
+        q: 'Túto kávu, ktorú pijem, _____.',
+        hint: 'Vzťah k jedlu, nápojom a veciam',
+        options: ['veľmi ľúbim', 'mám veľmi rád', 'sa mi veľmi páči'],
         correct: 1,
-        exp: 'Sloveso „rozumieť“ má v 3. osobe množného čísla tvar „oni rozumejú / nerozumejú“.'
+        exp: 'Pri jedle a nápojoch používame „mať rád“ (mám rád kávu) alebo „chutiť“ (káva mi chutí). „Ľúbiť“ používame pre osoby.'
     },
     {
         id: 14,
         cat: 'slovesa',
-        catName: 'Slovesá a časy',
-        level: 'A1',
-        q: 'Čo ___ včera večer, keď som ti volala?',
-        hint: 'Minulý čas v 2. osobe (ty)',
-        options: ['robil', 'si robil', 'robila si', 'urobil'],
-        correct: 1,
-        exp: 'V 1. a 2. osobe minulého času musíme použiť pomocné sloveso som/si/sme/ste → „Čo si robil?“'
+        catName: 'Slovesá a väzby',
+        level: 'A2',
+        q: 'Táto polievka je výborná, _____.',
+        hint: 'Ako pochválime dobré jedlo?',
+        options: ['veľmi mi chutí', 'veľmi sa mi páči', 'veľmi ju ľúbim'],
+        correct: 0,
+        exp: 'Pri jedle a pití hovoríme, že nám „chutí“ (veľmi mi chutí). „Páči sa mi“ používame pre vizuálny dojem alebo veci.'
     },
     {
         id: 15,
         cat: 'slovesa',
-        catName: 'Slovesá a časy',
+        catName: 'Slovesá a väzby',
         level: 'A2',
-        q: 'Zajtra večer ___ doma a budeme pozerať film.',
-        hint: 'Budúci čas',
-        options: ['budeme zostať', 'zostaneme', 'zostávame budúci', 'budeme zostaneme'],
+        q: 'Každý piatok _____ s kamarátmi na pivo.',
+        hint: 'Pravidelne opakovaný pohyb',
+        options: ['ideme', 'chodíme', 'pôjdeme'],
         correct: 1,
-        exp: 'Sloveso „zostať“ je dokonavé, preto tvorí budúci čas priamo bez slova „budeme“ → zajtra zostaneme.'
+        exp: 'Keď sa pohyb opakuje pravidelne („každý piatok“), používame sloveso „chodiť“ → chodíme na pivo.'
     },
     {
         id: 16,
         cat: 'slovesa',
-        catName: 'Slovesá a časy',
+        catName: 'Slovesá a väzby',
         level: 'A2',
-        q: 'Celé poobede som ___ ten dlhý e-mail, ale ešte nie je hotový.',
-        hint: 'Proces vs. ukončený dej (vid slovies)',
-        options: ['napísal', 'písal', 'píšem', 'napíšem'],
-        correct: 1,
-        exp: 'Keď dej trval dlho a ešte nie je dokončený („celé poobede“), použijeme nedokonavé sloveso „písal som“.'
+        q: 'Prepáčte, že idem neskoro, _____ mi autobus.',
+        hint: 'Keď dopravný prostriedok príde neskôr ako podľa grafikonu',
+        options: ['opozdil sa', 'zmeškal', 'meškal'],
+        correct: 2,
+        exp: 'Autobus alebo vlak „meškal“. Človek môže „zmeškať autobus“ (nestihnúť ho).'
     },
     {
         id: 17,
         cat: 'slovesa',
-        catName: 'Slovesá a časy',
-        level: 'B1',
-        q: 'Keď konečne ___ domov, hneď mi napíš správu.',
-        hint: 'Dokonavý budúci čas vo vedľajšej vete',
-        options: ['prichádzaš', 'budeš prísť', 'prídeš', 'chodíš'],
-        correct: 2,
-        exp: 'Jednorazový dokončený dej v budúcnosti vyjadrujeme tvarom „prídeš“ (od slovesa prísť).'
+        catName: 'Slovesá a väzby',
+        level: 'A2',
+        q: 'Neviem nájsť svoje kľúče, asi som ich včera _____.',
+        hint: 'Keď niečo nevieme nájsť vs. keď niečo necháme doma',
+        options: ['zabudol', 'stratil', 'zgubil'],
+        correct: 1,
+        exp: 'Keď kľúče vôbec nevieme nájsť, tak sme ich „stratili“. „Zabudol som kľúče“ povieme, keď vieme, že ostali napr. doma na stole.'
     },
     {
         id: 18,
         cat: 'slovesa',
-        catName: 'Slovesá a časy',
-        level: 'B1',
-        q: 'Minulý rok sme každý piatok ___ plávať.',
-        hint: 'Opakovaný dej v minulosti',
-        options: ['išli', 'chodili', 'prišli', 'pošli'],
+        catName: 'Slovesá a väzby',
+        level: 'A1',
+        q: 'Polož tie kľúče _____ na stôl.',
+        hint: 'Smer (kam?) vs. miesto (kde?)',
+        options: ['tu', 'sem', 'semka'],
         correct: 1,
-        exp: 'Pre pravidelne opakovaný pohyb v minulosti („každý piatok“) používame sloveso „chodili sme“.'
+        exp: 'Pri pohybe (kam máš niečo položiť alebo prísť) používame spisovne „sem“ (Poď sem! Polož to sem!). „Tu“ vyjadruje statické miesto (Kde to je? Tu.).'
     },
 
-    // KATEGÓRIA 4: PREDLOŽKY (do/na, pre/za, o/v...) - 6 otázok
+    // KATEGÓRIA 4: PREDLOŽKY (6 otázok)
     {
         id: 19,
         cat: 'predlozky',
         catName: 'Predložky',
         level: 'A1',
-        q: 'Zajtra ráno idem ___ Slovensko a potom ___ koncert.',
-        hint: 'Kam? (do vs. na)',
-        options: ['v / na', 'do / do', 'na / na', 'do / na'],
-        correct: 2,
-        exp: 'Hovoríme „na Slovensko“ (výnimka pri krajinách) a pri podujatiach/akciách vždy „na koncert, na výstavu, na kávu“.'
+        q: 'Už desať minút tu stojím a čakám _____.',
+        hint: 'Sloveso „čakať“ + predložka',
+        options: ['autobus', 'na autobus', 'autobusu'],
+        correct: 1,
+        exp: 'Sloveso čakať sa v slovenčine viaže s predložkou NA + Akuzatív → čakám na autobus, čakám na teba.'
     },
     {
         id: 20,
         cat: 'predlozky',
         catName: 'Predložky',
         level: 'A2',
-        q: 'Kúpila som tento darček ___ moju mamu a zaplatila som ___ neho 30 eur.',
-        hint: 'Pre koho (účel) vs. za čo (cena/výmena)',
-        options: ['za / pre', 'pre / za', 'pre / pre', 'za / za'],
-        correct: 1,
-        exp: 'Darček je určený PRE mamu, ale pri platení peňazí platíme ZA niečo (zaplatiť za darček).'
+        q: 'Stretneme sa v meste _____.',
+        hint: 'Vyjadrenie presného času (hodiny)',
+        options: ['v piatej', 'na piatu', 'o piatej'],
+        correct: 2,
+        exp: 'Pri určovaní času na hodinkách používame predložku O + Lokál → o piatej (hodine), o jednej, o desiatej.'
     },
     {
         id: 21,
         cat: 'predlozky',
         catName: 'Predložky',
-        level: 'A2',
-        q: 'Stretneme sa ___ piatok ___ piatej hodine.',
-        hint: 'Časové predložky (deň vs. hodina)',
-        options: ['v / v', 'v / o', 'na / o', 'o / v'],
+        level: 'A1',
+        q: 'Zajtra ráno musím ísť _____.',
+        hint: 'Inštitúcie s predložkou „na“',
+        options: ['do pošty', 'na poštu', 'v poštu'],
         correct: 1,
-        exp: 'Dni v týždni majú predložku V (v piatok), ale presný čas na hodinkách má predložku O (o piatej hodine).'
+        exp: 'Hovoríme „ísť na poštu, na políciu, na úrad, na stanicu“ (s predložkou NA).'
     },
     {
         id: 22,
         cat: 'predlozky',
         catName: 'Predložky',
-        level: 'A2',
-        q: 'Idem ___, lebo ma bolí hrdlo.',
-        hint: 'Kam idem, keď navštívim osobu?',
-        options: ['k lekárovi', 'do lekára', 'na lekára', 'u lekára'],
-        correct: 0,
-        exp: 'Keď ideme za nejakou osobou (smerom k nej), používame predložku K/Ku + Datív → idem k lekárovi (som u lekára).'
+        level: 'B1',
+        q: 'Vlak do Košíc odchádza _____.',
+        hint: 'Kedy v budúcnosti? (Častý chyták)',
+        options: ['za päť minút', 'cez päť minút', 'o päť minút'],
+        correct: 2,
+        exp: 'Keď hovoríme, po akom čase v budúcnosti sa niečo stane, spisovne používame O + Akuzatív → o päť minút.'
     },
     {
         id: 23,
         cat: 'predlozky',
         catName: 'Predložky',
-        level: 'B1',
-        q: 'Vrátime sa ___ desať minút, počkaj nás tu.',
-        hint: 'O aký čas v budúcnosti (častá chyba pod vplyvom ruštiny/ukrajinčiny)',
-        options: ['cez', 'za', 'o', 'po'],
-        correct: 2,
-        exp: 'V spisovnej slovenčine pri otázke „kedy v budúcnosti?“ používame predložku O + Akuzatív → „vrátime sa o desať minút“ (nie „čerez/cez“).'
+        level: 'A2',
+        q: 'Tento darček som dostal _____.',
+        hint: 'Pôvod darčeka od osoby (Genitív)',
+        options: ['z môjho brata', 'od môjho brata', 'od môjmu bratovi'],
+        correct: 1,
+        exp: 'Darček alebo správu dostávame OD niekoho (s Genitívom – od koho/čoho) → od môjho brata.'
     },
     {
         id: 24,
         cat: 'predlozky',
         catName: 'Predložky',
-        level: 'B1',
-        q: 'Vlak mešká ___.',
-        hint: 'Príčina negatívnej udalosti',
-        options: ['pre zlé počasie', 'kvôli zlému počasiu', 'od zlého počasia', 'Obe možnosti (pre / kvôli) sa v praxi používajú'],
-        correct: 3,
-        exp: 'V bežnej reči Slováci používajú „kvôli zlému počasiu“ a v spisovnej slovenčine „pre zlé počasie“. Obe je dobré poznať!'
+        level: 'A1',
+        q: 'Teraz žijem a pracujem na _____.',
+        hint: 'Lokál po predložke „na“',
+        options: ['Slovenskom', 'Slovenska', 'Slovensku'],
+        correct: 2,
+        exp: 'Otázka KDE? (Lokál) → žijem na Slovensku.'
     },
 
-    // KATEGÓRIA 5: B1 VÄZBY A SLOVOSLED (Podmienky „keby“, spájanie viet) - 6 otázok
+    // KATEGÓRIA 5: SLOVNÁ ZÁSOBA A CHYTÁKY (6 otázok)
     {
         id: 25,
-        cat: 'b1vazby',
-        catName: 'B1 Väzby a podmienky',
-        level: 'B1',
-        q: 'Keby ___ viac voľného času, chodil by som pravidelne cvičiť.',
-        hint: 'Podmienková veta s „keby“ (častá chyba: keby by som)',
-        options: ['by som mal', 'som mal', 'mám', 'budem mať'],
+        cat: 'slovna_zasoba',
+        catName: 'Slovná zásoba a chytáky',
+        level: 'A2',
+        q: 'Mám rezervovanú _____ v tomto hoteli.',
+        hint: 'Falošný priateľ pri ubytovaní v hoteli',
+        options: ['číslo', 'izbu', 'miestnosť'],
         correct: 1,
-        exp: 'Slovo „keby“ už v sebe obsahuje časticu „by“! Preto po „keby“ nikdy nedávame druhé „by“ → Keby som mal čas...'
+        exp: 'V hoteli si rezervujeme „hotelovú izbu“ (nie „číslo“).'
     },
     {
         id: 26,
-        cat: 'b1vazby',
-        catName: 'B1 Väzby a podmienky',
+        cat: 'slovna_zasoba',
+        catName: 'Slovná zásoba a chytáky',
         level: 'B1',
-        q: 'Kolegyňa mi povedala, ___ dnes príde do práce trochu neskôr.',
-        hint: 'Nepriama reč vs. želanie (že vs. aby)',
-        options: ['aby', 'že', 'nech', 'čo'],
+        q: 'V tejto kaviarni je veľmi príjemná _____.',
+        hint: 'Príjemný vs. nepríjemný vnem nosom',
+        options: ['zápach', 'vôňa', 'čuch'],
         correct: 1,
-        exp: 'Keď len oznamujeme fakt/informáciu, spájame vety spojkou „že“ (povedala, že príde).'
+        exp: 'Príjemná aróma (káva, kvety, parfum) je „vôňa“. Slovo „zápach“ znamená iba nepríjemný smrad.'
     },
     {
         id: 27,
-        cat: 'b1vazby',
-        catName: 'B1 Väzby a podmienky',
-        level: 'B1',
-        q: 'Šéf odo mňa chcel, ___ som ten report poslal ešte dnes.',
-        hint: 'Požiadavka / želanie niekoho iného (aby + minulý tvar)',
-        options: ['že', 'aby', 'keby', 'nech by'],
-        correct: 1,
-        exp: 'Keď niekto chce/prosí/žiada, aby druhá osoba niečo urobila, používame „aby som / aby si / aby...“.'
+        cat: 'slovna_zasoba',
+        catName: 'Slovná zásoba a chytáky',
+        level: 'A1',
+        q: 'Do Bratislavy som prišiel, keď som mal 25 _____.',
+        hint: 'Vyjadrenie veku po číslovkách od 5 vyššie',
+        options: ['roky', 'let', 'rokov'],
+        correct: 2,
+        exp: 'V slovenčine nepoužívame slovo „let“ pre vek. Po číslach 5 a viac používame Genitív množného čísla → 25 rokov.'
     },
     {
         id: 28,
-        cat: 'b1vazby',
-        catName: 'B1 Väzby a podmienky',
+        cat: 'slovna_zasoba',
+        catName: 'Slovná zásoba a chytáky',
         level: 'B1',
-        q: 'Táto kniha, ___ som čítal minulý týždeň, je naozaj výborná.',
-        hint: 'Vzťažné zámeno „ktorý“ v Akuzatíve ženského rodu',
-        options: ['ktorá', 'ktorú', 'ktorej', 'čo'],
+        q: 'Prosím si jeden _____ vývar.',
+        hint: 'Polievka z mäsa z kravy / býka v reštaurácii',
+        options: ['kravský', 'hovädzí', 'goviadzí'],
         correct: 1,
-        exp: 'Kniha je ženský rod, ale vo vedľajšej vete sa pýtame „čítal som koho/čo?“ (Akuzatív) → kniha, ktorú som čítal.'
+        exp: 'Mäso a vývar z tohto dobytka sa v slovenčine volá „hovädzí“ (hovädzí vývar, hovädzie mäso).'
     },
     {
         id: 29,
-        cat: 'b1vazby',
-        catName: 'B1 Väzby a podmienky',
-        level: 'B1',
-        q: '___ pršalo, išli sme sa prejsť do lesa.',
-        hint: 'Vyjadrenie príčiny vs. prípustky (aj keď)',
-        options: ['Pretože', 'Napriek tomu, že', 'Kvôli tomu', 'Aby'],
+        cat: 'slovna_zasoba',
+        catName: 'Slovná zásoba a chytáky',
+        level: 'A1',
+        q: 'Po obede si prosím jednu _____ kávy.',
+        hint: 'Z čoho pijeme teplú kávu alebo čaj?',
+        options: ['čašku', 'šálku', 'pohár'],
         correct: 1,
-        exp: '„Napriek tomu, že pršalo“ (alebo „Hoci pršalo“) vyjadruje, že sme niečo urobili aj napriek prekážke.'
+        exp: 'Kávu a čaj pijeme zo „šálky“. „Pohár“ je zo skla na vodu, džús alebo víno (slovo „čaška“ v bežnej slovenčine nepoužívame).'
     },
     {
         id: 30,
-        cat: 'b1vazby',
-        catName: 'B1 Väzby a podmienky',
+        cat: 'slovna_zasoba',
+        catName: 'Slovná zásoba a chytáky',
         level: 'B1',
-        q: 'Ako sa zdvorilo opýtaš v kaviarni, či majú voľný stôl?',
-        hint: 'Podmieňovací spôsob pre slušnú komunikáciu',
-        options: [
-            'Dajte mi jeden stôl.',
-            'Chcel by som sa opýtať, či máte voľný stôl.',
-            'Pýtam sa, kde je stôl.',
-            'Chcem opýtať, či je stôl.'
-        ],
+        q: 'Aký máš _____ na túto situáciu?',
+        hint: 'Keď sa pýtame, čo si niekto myslí o nejakej téme',
+        options: ['pohľad', 'názor', 'mienku'],
         correct: 1,
-        exp: 'Fráza „Chcel/a by som sa opýtať...“ je najprirodzenejší a najzdvorilejší spôsob v slovenčine.'
+        exp: 'Štandardná a najprirodzenejšia väzba v slovenčine je „mať názor na niečo“ (Aký máš na to názor?).'
     }
 ];
 
 // KATALÓG KURZOV S BALÍČKAMI (TIERS)
 const COURSES_DATA = {
+    prvapomoc: {
+        id: 'prvapomoc',
+        title: 'Slovenská prvá pomoc (Minikurz)',
+        badge: 'Minikurz A1 – B1 • Video + PDF + Vysvetlenia k testu',
+        price: 29,
+        desc: 'Tieto chyby robí až 90 % študentov! Praktický minikurz, v ktorom ťa rýchlo a zrozumiteľne odnaučíme najčastejšie gramatické chytáky (pády, predložky, falošných priateľov a slovosled). Ako bonus získaš kompletný PDF kľúč a vysvetlenia ku všetkým otázkam z testu.',
+        packages: [
+            { id: 'minikurz', name: 'Kompletný Minikurz + PDF rozbor chýb', price: 29, desc: 'Okamžitý prístup k lekciám, prehľadovým tabuľkám a detailným vysvetleniam správnych odpovedí' }
+        ],
+        bullets: [
+            '✓ Najčastejšie gramatické pasce a chytáky vysvetlené po lopate',
+            '✓ Rozdiel medzi zradnými slovíčkami (falošní priatelia v praxi)',
+            '✓ Prehľadné ťaháky na predložky, pády a zvratné slovesá',
+            '✓ BONUS ZDARMA: Kompletný rozbor a vysvetlenie všetkých 30 otázok z testu'
+        ]
+    },
     sasi: {
         id: 'sasi',
         title: 'Záhada menom SA a SI',
-        badge: 'Kurz A2 – B1 • Zoom naživo + PDF',
+        badge: 'Skupinový kurz A2 – B1 • Zoom naživo + PDF',
         price: 99,
         desc: 'Praktický 4-týždňový kurz cez Zoom v malej skupine + kompletné pracovné listy a nahrávky. Konečne prestaneš hádať, kedy použiť SA, kedy SI a kam presne ich dať vo vete.',
         packages: [
@@ -372,42 +378,25 @@ const COURSES_DATA = {
     },
     b1: {
         id: 'b1',
-        title: 'Ťažké témy B1',
-        badge: 'Kurz B1 • Zoom naživo + PDF',
+        title: 'Ťažké témy B1 / Príprava A2+',
+        badge: 'Skupinový kurz & A2 Simulátor • Zoom + PDF',
         price: 105,
-        desc: '5-týždňový skupinový kurz cez Zoom pre študentov, ktorí už rozumejú, ale chcú hovoriť plynulo, správne používať vid slovies (písal vs. napísal), podmienky (keby som) a predložky.',
+        desc: 'Tvoja slovenčina je na výbornej úrovni! Posuň sa ešte ďalej v našom 5-týždňovom skupinovom kurze cez Zoom alebo si vyskúšaj prípravu na oficiálnu skúšku A2.',
         packages: [
-            { id: 'standard', name: 'Kompletný kurz B1', price: 105, desc: '5x živá Zoom lekcia + PDF cvičenia + záznamy z hodín' }
+            { id: 'standard', name: 'Skupinový kurz (5 týždňov Zoom + PDF)', price: 105, desc: '5x živá Zoom lekcia v malej skupine + PDF cvičenia + záznamy z hodín' },
+            { id: 'a2sim', name: 'Simulátor a príprava na skúšku A2', price: 29, desc: 'Cvičné testy A2, tréning počúvania a porozumenia + vzorové odpovede' }
         ],
         bullets: [
-            '✓ Dokonavý vs. nedokonavý vid slovies bez stresu',
-            '✓ Podmienkové vety (Keby som...) a zdvorilá slovenčina',
-            '✓ Najčastejšie pasce pri predložkách a skloňovaní v B1',
-            '✓ 5x živé stretnutie na Zoome v malej skupine'
-        ]
-    },
-    individual: {
-        id: 'individual',
-        title: 'Individuálna lekcia (1-on-1)',
-        badge: 'Všetky úrovne • 45 minút cez Zoom',
-        price: 25,
-        desc: 'Súkromná lekcia prispôsobená presne tvojmu cieľu – príprava na pracovný pohovor, skúšku A2/B1, konverzácia alebo dovysvetlenie gramatiky.',
-        packages: [
-            { id: 'single', name: '1x Individuálna lekcia (45 min)', price: 25, desc: 'Súkromná hodina cez Zoom + zápis nových slovíčok' },
-            { id: 'pack4', name: 'Balíček 4 lekcií (Zvýhodnený)', price: 92, desc: '4x 45 minút cez Zoom + individuálny študijný plán' }
-        ],
-        bullets: [
-            '✓ 100 % času sa venujeme len tvojim otázkam',
-            '✓ Bezpečné tempo Slow Slovak bez stresu',
-            '✓ Flexibilný výber termínu v kalendári'
+            '✓ Konverzácia a ťažšie gramatické väzby v praxi bez stresu',
+            '✓ Tréning na úroveň A2/B1 (počúvanie, písanie, rozprávanie)',
+            '✓ Okamžitá spätná väzba a podpora v malej skupine',
+            '✓ Kompletné študijné PDF materiály a nahrávky v cene'
         ]
     }
 };
 
-// Alias pre spätnú kompatibilitu
 const COURSES = {
+    prvapomoc: COURSES_DATA.prvapomoc,
     sasi: COURSES_DATA.sasi,
-    b1: COURSES_DATA.b1,
-    indiv: COURSES_DATA.individual,
-    individual: COURSES_DATA.individual
+    b1: COURSES_DATA.b1
 };
