@@ -59,13 +59,15 @@ body.lang-en .lang-en {
 ::-webkit-scrollbar-thumb:hover {
     background: #94A3B8;
 }
-/* Dokonalé odsadenie pre mobilnú verzia */
+/* Úprava pre mobilnú verziu – odstránenie medzery nad modrým pruhom */
 @media (max-width: 768px) {
     body {
-        padding-top: 85px; /* Zväčší priestor pre horný obdĺžnik, aby mal vzduch */
+        padding-top: 0 !important; /* Zrušíme nežiaducu medzeru úplne hore */
     }
-    /* Zabezpečíme medzeru medzi horným oznamom a hlavným nadpisom/menu */
+    
+    /* Ak je modrý pruh pevne uchytený, dáme mu priestor pod ním, aby nezasahoval do hlavičky */
+    /* Predpokladajme, že modrý pruh má nejakú triedu alebo ID, prípadne ho odsadíme priamo cez header: */
     header {
-        margin-top: 15px !important;
+        margin-top: 10px;
     }
 }
