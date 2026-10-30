@@ -59,3 +59,12 @@ body.lang-en .lang-en {
 ::-webkit-scrollbar-thumb:hover {
     background: #94A3B8;
 }
+/* Oprava prekrývania headeru na mobile */
+@media (max-width: 768px) {
+    body {
+        padding-top: 45px;
+    }
+    header {
+        position: relative !important;
+    }
+}
