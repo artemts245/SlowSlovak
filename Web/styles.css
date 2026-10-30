@@ -71,3 +71,11 @@ body.lang-en .lang-en {
         margin-top: 10px;
     }
 }
+@media (max-width: 768px) {
+    header {
+        height: auto !important;
+        min-height: 85px !important;
+        padding-bottom: 12px !important;
+        padding-top: 12px !important;
+    }
+}
